@@ -13,14 +13,14 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="relative -mt-6 z-20 max-w-5xl mx-auto px-6">
+    <div className="relative -mt-6 z-20 max-w-7xl mx-auto px-6">
       <div 
         className="bg-white shadow-premium rounded-full p-2 flex flex-col md:flex-row items-stretch md:items-center gap-2"
         data-aos="zoom-in"
         data-aos-delay="400"
       >
         {/* Select Operación */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-[140px]">
           <select
             value={operacion}
             onChange={(e) => setOperacion(e.target.value)}
@@ -42,7 +42,7 @@ export default function SearchBar() {
         <div className="hidden md:block w-px h-8 bg-gray-200"></div>
 
         {/* Select Ubicación */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-[140px]">
           <select
             value={ubicacion}
             onChange={(e) => setUbicacion(e.target.value)}
@@ -66,7 +66,7 @@ export default function SearchBar() {
         <div className="hidden md:block w-px h-8 bg-gray-200"></div>
 
         {/* Select Tipo */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-[180px]">
           <select
             value={tipo}
             onChange={(e) => setTipo(e.target.value)}
