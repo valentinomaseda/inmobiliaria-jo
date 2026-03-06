@@ -16,7 +16,7 @@ export default function Hero() {
       <div className="absolute inset-0 bg-white/40"></div>
 
       {/* Contenido */}
-      <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8 py-32">
+      <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8 py-32 pb-40">
         <h1 
           className="text-5xl md:text-7xl font-bold tracking-tighter leading-[1.1]"
           data-aos="fade-down"
