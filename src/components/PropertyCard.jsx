@@ -1,10 +1,15 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function PropertyCard({ propiedad }) {
   return (
-    <article className="group bg-white rounded-2xl overflow-hidden shadow-premium hover:shadow-premium-hover transition-all duration-300 border border-jo-border/50 flex flex-col">
+    <article 
+      className="group bg-white rounded-2xl overflow-hidden shadow-premium hover:shadow-premium-hover transition-all duration-300 border border-jo-border/50 flex flex-col"
+      data-aos="fade-up"
+      data-aos-duration="600"
+    >
       {/* Imagen con Etiqueta */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-100">
+      <Link to={`/propiedad/${propiedad.id}`} className="relative aspect-[4/3] w-full overflow-hidden bg-gray-100 block">
         <div className="absolute top-4 left-4 z-10 bg-white/95 backdrop-blur-sm px-4 py-1.5 rounded-full text-xs font-bold tracking-wide text-jo-dark shadow-sm">
           {propiedad.tipo}
         </div>
@@ -13,7 +18,7 @@ export default function PropertyCard({ propiedad }) {
           alt={propiedad.titulo} 
           className="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-700 ease-in-out"
         />
-      </div>
+      </Link>
 
       {/* Contenido de Tarjeta */}
       <div className="p-6 flex flex-col flex-grow">
@@ -22,9 +27,11 @@ export default function PropertyCard({ propiedad }) {
             <span className="text-xs font-semibold text-jo-textMuted uppercase tracking-wider block mb-1">
               {propiedad.ubicacion}
             </span>
-            <h3 className="text-lg font-display font-bold text-jo-dark leading-tight line-clamp-2">
-              {propiedad.titulo}
-            </h3>
+            <Link to={`/propiedad/${propiedad.id}`}>
+              <h3 className="text-lg font-display font-bold text-jo-dark leading-tight line-clamp-2 hover:text-jo-pink transition-colors">
+                {propiedad.titulo}
+              </h3>
+            </Link>
           </div>
         </div>
         
@@ -57,11 +64,14 @@ export default function PropertyCard({ propiedad }) {
         {/* Precio y CTA */}
         <div className="mt-auto flex items-center justify-between">
           <span className="text-xl font-display font-bold text-jo-pink">{propiedad.precio}</span>
-          <button className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-jo-dark hover:bg-jo-pink hover:text-white transition-colors">
+          <Link 
+            to={`/propiedad/${propiedad.id}`}
+            className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-jo-dark hover:bg-jo-pink hover:text-white transition-colors"
+          >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
             </svg>
-          </button>
+          </Link>
         </div>
       </div>
     </article>

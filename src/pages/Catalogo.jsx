@@ -21,7 +21,7 @@ export default function Catalogo() {
     <div className="min-h-screen bg-white pt-28 pb-20">
       <div className="max-w-7xl mx-auto px-6">
         {/* Header de Catálogo */}
-        <div className="mb-12">
+        <div className="mb-12" data-aos="fade-down">
           <Link 
             to="/" 
             className="inline-flex items-center text-jo-pink hover:text-jo-pinkHover transition-colors mb-6 group"
@@ -41,7 +41,11 @@ export default function Catalogo() {
         </div>
 
         {/* Filtros y Búsqueda */}
-        <div className="bg-gray-50 rounded-2xl p-6 mb-10 space-y-4">
+        <div 
+          className="bg-gray-50 rounded-2xl p-6 mb-10 space-y-4"
+          data-aos="fade-up"
+          data-aos-delay="100"
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Buscador */}
             <div className="relative">

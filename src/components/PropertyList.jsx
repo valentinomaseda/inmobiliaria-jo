@@ -7,7 +7,10 @@ export default function PropertyList({ propiedades, destacadas = false }) {
 
   return (
     <main id="propiedades" className="flex-grow max-w-7xl mx-auto px-6 py-20 w-full">
-      <div className="flex flex-col md:flex-row md:justify-between md:items-end mb-12 gap-4">
+      <div 
+        className="flex flex-col md:flex-row md:justify-between md:items-end mb-12 gap-4"
+        data-aos="fade-up"
+      >
         <div>
           <h2 className="text-3xl font-display font-bold text-jo-dark">
             {destacadas ? 'Últimos Ingresos' : 'Catálogo Completo'}
