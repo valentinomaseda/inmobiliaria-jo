@@ -106,6 +106,7 @@ CREATE TABLE `propiedad` (
   `idPropiedad` int unsigned NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) NOT NULL,
   `valor` DECIMAL(12,2) NOT NULL,
+  `moneda` ENUM('USD', 'ARS', 'EUR') DEFAULT 'USD',
   `descripcion` TEXT DEFAULT NULL,
   `cantAmbientes` int DEFAULT NULL,
   `metCuad` DECIMAL(10,2) DEFAULT NULL,

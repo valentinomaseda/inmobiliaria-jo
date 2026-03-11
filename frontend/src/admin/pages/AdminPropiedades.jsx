@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FiPlus, FiEdit2, FiTrash2, FiSearch } from 'react-icons/fi';
 import { propiedadService } from '../../services/propiedadService';
 import { imagenService } from '../../services/imagenService';
+import CustomSelect from '../components/CustomSelect';
 
 export default function AdminPropiedades() {
   const [propiedades, setPropiedades] = useState([]);
@@ -70,54 +71,60 @@ export default function AdminPropiedades() {
             <label className="block text-xs sm:text-sm font-medium text-jo-darkText mb-2">
               Operación
             </label>
-            <select
+            <CustomSelect
+              name="operacion"
               value={filtros.operacion}
               onChange={(e) => setFiltros({ ...filtros, operacion: e.target.value })}
-              className="w-full px-3 sm:px-4 py-2 bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none text-sm"
-            >
-              <option value="">Todas</option>
-              <option value="venta">Venta</option>
-              <option value="alquiler">Alquiler</option>
-              <option value="alquiler_temporal">Alquiler Temporal</option>
-            </select>
+              placeholder="Todas"
+              options={[
+                { value: '', label: 'Todas' },
+                { value: 'venta', label: 'Venta' },
+                { value: 'alquiler', label: 'Alquiler' },
+                { value: 'alquiler_temporal', label: 'Alquiler Temporal' }
+              ]}
+            />
           </div>
 
           <div>
             <label className="block text-xs sm:text-sm font-medium text-jo-darkText mb-2">
               Tipo
             </label>
-            <select
+            <CustomSelect
+              name="tipo"
               value={filtros.tipo}
               onChange={(e) => setFiltros({ ...filtros, tipo: e.target.value })}
-              className="w-full px-3 sm:px-4 py-2 bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none text-sm"
-            >
-              <option value="">Todos</option>
-              <option value="casa">Casa</option>
-              <option value="departamento">Departamento</option>
-              <option value="terreno">Terreno</option>
-              <option value="local">Local</option>
-              <option value="oficina">Oficina</option>
-              <option value="galpon">Galpón</option>
-              <option value="quinta">Quinta</option>
-            </select>
+              placeholder="Todos"
+              options={[
+                { value: '', label: 'Todos' },
+                { value: 'casa', label: 'Casa' },
+                { value: 'departamento', label: 'Departamento' },
+                { value: 'terreno', label: 'Terreno' },
+                { value: 'local', label: 'Local' },
+                { value: 'oficina', label: 'Oficina' },
+                { value: 'galpon', label: 'Galpón' },
+                { value: 'quinta', label: 'Quinta' }
+              ]}
+            />
           </div>
 
           <div>
             <label className="block text-xs sm:text-sm font-medium text-jo-darkText mb-2">
               Estado
             </label>
-            <select
+            <CustomSelect
+              name="estado"
               value={filtros.estado}
               onChange={(e) => setFiltros({ ...filtros, estado: e.target.value })}
-              className="w-full px-3 sm:px-4 py-2 bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none text-sm"
-            >
-              <option value="">Todos</option>
-              <option value="disponible">Disponible</option>
-              <option value="reservada">Reservada</option>
-              <option value="vendida">Vendida</option>
-              <option value="alquilada">Alquilada</option>
-              <option value="inactiva">Inactiva</option>
-            </select>
+              placeholder="Todos"
+              options={[
+                { value: '', label: 'Todos' },
+                { value: 'disponible', label: 'Disponible' },
+                { value: 'reservada', label: 'Reservada' },
+                { value: 'vendida', label: 'Vendida' },
+                { value: 'alquilada', label: 'Alquilada' },
+                { value: 'inactiva', label: 'Inactiva' }
+              ]}
+            />
           </div>
 
           <div className="flex items-end">

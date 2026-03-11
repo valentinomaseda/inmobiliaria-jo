@@ -18,13 +18,17 @@ export default function PropiedadDetalle() {
         const response = await propiedadService.getById(id);
         const prop = response.data;
         
+        // Formatear precio con moneda
+        const simboloMoneda = prop.moneda === 'USD' ? 'USD ' : prop.moneda === 'ARS' ? 'ARS ' : prop.moneda === 'EUR' ? 'EUR ' : '';
+        const precioFormateado = `${simboloMoneda}$${Number(prop.valor).toLocaleString('es-AR')}`;
+        
         // Transformar al formato esperado
         const propTransformada = {
           id: prop.idPropiedad,
           titulo: prop.nombre,
           ubicacion: `${prop.ciudad || ''}, ${prop.provincia || ''}`.trim().replace(/^,\s*/, ''),
           direccion: prop.direccion,
-          precio: `$${Number(prop.valor).toLocaleString()}`,
+          precio: precioFormateado,
           tipo: prop.operacion === 'venta' ? 'Venta' : prop.operacion === 'alquiler' ? 'Alquiler' : 'Alquiler temporal',
           operacion: prop.operacion,
           ambientes: prop.cantAmbientes || 0,
@@ -48,11 +52,16 @@ export default function PropiedadDetalle() {
           .slice(0, 3)
           .map(p => {
             const imagenPrincipal = p.imagenes?.find(img => img.es_principal) || p.imagenes?.[0];
+            
+            // Formatear precio con moneda
+            const simboloMoneda = p.moneda === 'USD' ? 'USD ' : p.moneda === 'ARS' ? 'ARS ' : p.moneda === 'EUR' ? 'EUR ' : '';
+            const precioFormateado = `${simboloMoneda}$${Number(p.valor).toLocaleString('es-AR')}`;
+            
             return {
               id: p.idPropiedad,
               titulo: p.nombre,
               ubicacion: `${p.ciudad || ''}, ${p.provincia || ''}`.trim().replace(/^,\s*/, ''),
-              precio: `$${Number(p.valor).toLocaleString()}`,
+              precio: precioFormateado,
               tipo: p.operacion === 'venta' ? 'Venta' : p.operacion === 'alquiler' ? 'Alquiler' : 'Alquiler temporal',
               imagen: imagenPrincipal ? imagenService.getImageUrl(imagenPrincipal.url) : '/placeholder.jpg'
             };

@@ -33,7 +33,7 @@ export default function AdminLogin() {
         <div className="text-center mb-6 sm:mb-8">
           <div className="flex justify-center mb-4 sm:mb-6">
             <img 
-              src="/src/public/logo-png.png" 
+              src="/src/public/logo-blanco.png" 
               alt="Juliana Ortiz Inmobiliaria" 
               className="h-16 sm:h-20 w-auto"
             />

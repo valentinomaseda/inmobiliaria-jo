@@ -46,9 +46,9 @@ export default function AdminSidebar({ isOpen, onClose }) {
         <div className="p-6 border-b border-jo-darkBorder flex justify-between items-center">
           <Link to="/" className="block">
             <img 
-              src="/src/public/logo-png.png" 
+              src="/src/public/logo-blanco.png" 
               alt="Juliana Ortiz" 
-              className="h-12 w-auto"
+              className="h-14.5 w-auto"
             />
           </Link>
           <button

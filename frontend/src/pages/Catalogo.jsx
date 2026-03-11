@@ -1,36 +1,57 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import PropertyCard from '../components/PropertyCard';
 import { propiedadService } from '../services/propiedadService';
 import { imagenService } from '../services/imagenService';
 
 export default function Catalogo() {
+  const [searchParams] = useSearchParams();
   const [propiedades, setPropiedades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filtroTipo, setFiltroTipo] = useState('Todos');
   const [busqueda, setBusqueda] = useState('');
 
+  // Obtener filtros de la URL
+  const filtrosURL = {
+    operacion: searchParams.get('operacion') || '',
+    ubicacion: searchParams.get('ubicacion') || '',
+    tipo: searchParams.get('tipo') || ''
+  };
+
   useEffect(() => {
     loadPropiedades();
-  }, []);
+  }, [searchParams]);
 
   const loadPropiedades = async () => {
     try {
-      const response = await propiedadService.getAll({ estado: 'disponible' });
+      // Construir parámetros para la API
+      const params = { estado: 'disponible' };
+      if (filtrosURL.operacion) params.operacion = filtrosURL.operacion;
+      if (filtrosURL.tipo) params.tipo = filtrosURL.tipo;
+      
+      const response = await propiedadService.getAll(params);
       // Transformar datos del API al formato esperado
       const propiedadesTransformadas = (response.data || []).map(prop => {
         const imagenPrincipal = prop.imagenes?.find(img => img.es_principal) || prop.imagenes?.[0];
+        
+        // Formatear precio con moneda
+        const simboloMoneda = prop.moneda === 'USD' ? 'USD ' : prop.moneda === 'ARS' ? 'ARS ' : prop.moneda === 'EUR' ? 'EUR ' : '';
+        const precioFormateado = `${simboloMoneda}$${Number(prop.valor).toLocaleString('es-AR')}`;
+        
         return {
           id: prop.idPropiedad,
           titulo: prop.nombre,
           ubicacion: `${prop.ciudad || ''}, ${prop.provincia || ''}`.trim().replace(/^,\s*/, ''),
-          precio: `$${Number(prop.valor).toLocaleString()}`,
+          precio: precioFormateado,
           tipo: prop.operacion === 'venta' ? 'Venta' : prop.operacion === 'alquiler' ? 'Alquiler' : 'Alquiler temporal',
           imagen: imagenPrincipal ? imagenService.getImageUrl(imagenPrincipal.url) : '/placeholder.jpg',
           ambientes: prop.cantAmbientes || 0,
           banos: prop.banos || 0,
           metros: `${prop.metCuad || 0} m²`,
-          destacada: false
+          destacada: false,
+          // Datos adicionales para filtros locales
+          ciudad: prop.ciudad,
+          tipoPropiedad: prop.tipo
         };
       });
       setPropiedades(propiedadesTransformadas);
@@ -41,14 +62,19 @@ export default function Catalogo() {
     }
   };
 
-  // Filtrar propiedades
+  // Filtrar propiedades localmente (para búsqueda por texto y filtro adicional)
   const propiedadesFiltradas = propiedades.filter(prop => {
     const cumpleTipo = filtroTipo === 'Todos' || prop.tipo === filtroTipo;
     const cumpleBusqueda = busqueda === '' || 
       prop.titulo.toLowerCase().includes(busqueda.toLowerCase()) ||
-      prop.ubicacion.toLowerCase().includes(busqueda.toLowerCase());
+      prop.ubicacion.toLowerCase().includes(busqueda.toLowerCase()) ||
+      (prop.ciudad && prop.ciudad.toLowerCase().includes(busqueda.toLowerCase()));
     
-    return cumpleTipo && cumpleBusqueda;
+    // Filtrar por ubicación si viene de la URL
+    const cumpleUbicacion = !filtrosURL.ubicacion || 
+      (prop.ciudad && prop.ciudad.toLowerCase().includes(filtrosURL.ubicacion.toLowerCase()));
+    
+    return cumpleTipo && cumpleBusqueda && cumpleUbicacion;
   });
 
   if (loading) {
@@ -80,6 +106,43 @@ export default function Catalogo() {
           <p className="text-lg text-jo-textMuted">
             Explora todas nuestras propiedades disponibles
           </p>
+          
+          {/* Mostrar filtros activos */}
+          {(filtrosURL.operacion || filtrosURL.ubicacion || filtrosURL.tipo) && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="text-sm text-gray-600">Filtros activos:</span>
+              {filtrosURL.operacion && (
+                <span className="inline-flex items-center gap-1 px-3 py-1 bg-jo-pink/10 text-jo-pink rounded-full text-sm font-medium">
+                  {filtrosURL.operacion === 'venta' ? 'Venta' : 'Alquiler'}
+                  <button onClick={() => window.location.href = '/catalogo'} className="hover:text-jo-pinkHover">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </span>
+              )}
+              {filtrosURL.ubicacion && (
+                <span className="inline-flex items-center gap-1 px-3 py-1 bg-jo-pink/10 text-jo-pink rounded-full text-sm font-medium capitalize">
+                  {filtrosURL.ubicacion}
+                  <button onClick={() => window.location.href = '/catalogo'} className="hover:text-jo-pinkHover">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </span>
+              )}
+              {filtrosURL.tipo && (
+                <span className="inline-flex items-center gap-1 px-3 py-1 bg-jo-pink/10 text-jo-pink rounded-full text-sm font-medium capitalize">
+                  {filtrosURL.tipo}
+                  <button onClick={() => window.location.href = '/catalogo'} className="hover:text-jo-pinkHover">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Filtros y Búsqueda */}

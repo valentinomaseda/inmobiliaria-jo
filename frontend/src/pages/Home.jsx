@@ -22,11 +22,16 @@ export default function Home() {
       // Transformar datos del API al formato esperado por los componentes
       const propiedadesTransformadas = (response.data || []).map(prop => {
         const imagenPrincipal = prop.imagenes?.find(img => img.es_principal) || prop.imagenes?.[0];
+        
+        // Formatear precio con moneda
+        const simboloMoneda = prop.moneda === 'USD' ? 'USD ' : prop.moneda === 'ARS' ? 'ARS ' : prop.moneda === 'EUR' ? 'EUR ' : '';
+        const precioFormateado = `${simboloMoneda}$${Number(prop.valor).toLocaleString('es-AR')}`;
+        
         return {
           id: prop.idPropiedad,
           titulo: prop.nombre,
           ubicacion: `${prop.ciudad || ''}, ${prop.provincia || ''}`.trim().replace(/^,\s*/, ''),
-          precio: `$${Number(prop.valor).toLocaleString()}`,
+          precio: precioFormateado,
           tipo: prop.operacion === 'venta' ? 'Venta' : prop.operacion === 'alquiler' ? 'Alquiler' : 'Alquiler temporal',
           imagen: imagenPrincipal ? imagenService.getImageUrl(imagenPrincipal.url) : '/placeholder.jpg',
           ambientes: prop.cantAmbientes || 0,

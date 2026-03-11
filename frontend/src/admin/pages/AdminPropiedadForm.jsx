@@ -4,6 +4,8 @@ import { FiSave, FiX, FiUpload, FiTrash2, FiImage } from 'react-icons/fi';
 import { propiedadService } from '../../services/propiedadService';
 import { imagenService } from '../../services/imagenService';
 import { caracteristicaService } from '../../services/caracteristicaService';
+import CustomSelect from '../components/CustomSelect';
+import CustomCheckbox from '../components/CustomCheckbox';
 
 const MAX_IMAGES = 10;
 
@@ -17,6 +19,7 @@ export default function AdminPropiedadForm() {
   const [formData, setFormData] = useState({
     nombre: '',
     valor: '',
+    moneda: 'USD',
     descripcion: '',
     cantAmbientes: '',
     metCuad: '',
@@ -35,6 +38,7 @@ export default function AdminPropiedadForm() {
     estado: 'disponible',
     destacada: false
   });
+  const [precioFormateado, setPrecioFormateado] = useState('');
   const [imagenes, setImagenes] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
@@ -63,8 +67,13 @@ export default function AdminPropiedadForm() {
       const propiedad = response.data;
       setFormData({
         ...propiedad,
+        moneda: propiedad.moneda || 'USD',
         destacada: !!propiedad.destacada
       });
+      // Formatear el precio para mostrar
+      if (propiedad.valor) {
+        setPrecioFormateado(formatearPrecio(propiedad.valor.toString()));
+      }
       setImagenes(propiedad.imagenes || []);
       setCaracteristicasSeleccionadas(
         (propiedad.caracteristicas || []).map(c => c.idCaracteristica)
@@ -75,11 +84,40 @@ export default function AdminPropiedadForm() {
     }
   };
 
+  // Función para formatear precio con separadores de miles
+  const formatearPrecio = (valor) => {
+    // Remover todo lo que no sea número
+    const numero = valor.toString().replace(/[^0-9]/g, '');
+    if (!numero) return '';
+    
+    // Formatear con puntos como separador de miles
+    return numero.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  };
+
+  // Función para limpiar el formato y obtener solo el número
+  const limpiarPrecio = (valor) => {
+    return valor.toString().replace(/[^0-9]/g, '');
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
       [name]: type === 'checkbox' ? checked : value
+    });
+  };
+
+  const handlePrecioChange = (e) => {
+    const valorIngresado = e.target.value;
+    const precioLimpio = limpiarPrecio(valorIngresado);
+    
+    // Actualizar el valor formateado para mostrar
+    setPrecioFormateado(formatearPrecio(precioLimpio));
+    
+    // Actualizar el valor numérico en el estado
+    setFormData({
+      ...formData,
+      valor: precioLimpio
     });
   };
 
@@ -233,74 +271,90 @@ export default function AdminPropiedadForm() {
               <label className="block text-xs sm:text-sm font-medium text-jo-darkText mb-2">
                 Operación *
               </label>
-              <select
+              <CustomSelect
                 name="operacion"
                 value={formData.operacion}
                 onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg placeholder:text-jo-darkTextMuted focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
                 required
-              >
-                <option value="venta">Venta</option>
-                <option value="alquiler">Alquiler</option>
-                <option value="alquiler_temporal">Alquiler Temporal</option>
-              </select>
+                options={[
+                  { value: 'venta', label: 'Venta' },
+                  { value: 'alquiler', label: 'Alquiler' },
+                  { value: 'alquiler_temporal', label: 'Alquiler Temporal' }
+                ]}
+              />
             </div>
 
             <div>
               <label className="block text-xs sm:text-sm font-medium text-jo-darkText mb-2">
                 Tipo *
               </label>
-              <select
+              <CustomSelect
                 name="tipo"
                 value={formData.tipo}
                 onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg placeholder:text-jo-darkTextMuted focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
                 required
-              >
-                <option value="casa">Casa</option>
-                <option value="departamento">Departamento</option>
-                <option value="terreno">Terreno</option>
-                <option value="local">Local</option>
-                <option value="oficina">Oficina</option>
-                <option value="galpon">Galpón</option>
-                <option value="quinta">Quinta</option>
-              </select>
+                options={[
+                  { value: 'casa', label: 'Casa' },
+                  { value: 'departamento', label: 'Departamento' },
+                  { value: 'terreno', label: 'Terreno' },
+                  { value: 'local', label: 'Local' },
+                  { value: 'oficina', label: 'Oficina' },
+                  { value: 'galpon', label: 'Galpón' },
+                  { value: 'quinta', label: 'Quinta' }
+                ]}
+              />
             </div>
 
             <div>
               <label className="block text-xs sm:text-sm font-medium text-jo-darkText mb-2">
-                Precio ($) *
+                Precio *
               </label>
-              <input
-                type="number"
-                name="valor"
-                value={formData.valor}
-                onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg placeholder:text-jo-darkTextMuted focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
-                placeholder="0"
-                required
-                min="0"
-                step="0.01"
-              />
+              <div className="flex gap-2">
+                <div className="w-28">
+                  <CustomSelect
+                    name="moneda"
+                    value={formData.moneda}
+                    onChange={handleChange}
+                    required
+                    options={[
+                      { value: 'USD', label: 'USD $' },
+                      { value: 'ARS', label: 'ARS $' },
+                      { value: 'EUR', label: 'EUR €' }
+                    ]}
+                  />
+                </div>
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    name="valor"
+                    value={precioFormateado}
+                    onChange={handlePrecioChange}
+                    className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg placeholder:text-jo-darkTextMuted focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
+                    placeholder="120.000"
+                    required
+                  />
+                </div>
+              </div>
+              <p className="text-xs text-jo-darkTextMuted mt-1">Ingrese el precio (se formateará automáticamente)</p>
             </div>
 
             <div>
               <label className="block text-xs sm:text-sm font-medium text-jo-darkText mb-2">
                 Estado *
               </label>
-              <select
+              <CustomSelect
                 name="estado"
                 value={formData.estado}
                 onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg placeholder:text-jo-darkTextMuted focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
                 required
-              >
-                <option value="disponible">Disponible</option>
-                <option value="reservada">Reservada</option>
-                <option value="vendida">Vendida</option>
-                <option value="alquilada">Alquilada</option>
-                <option value="inactiva">Inactiva</option>
-              </select>
+                options={[
+                  { value: 'disponible', label: 'Disponible' },
+                  { value: 'reservada', label: 'Reservada' },
+                  { value: 'vendida', label: 'Vendida' },
+                  { value: 'alquilada', label: 'Alquilada' },
+                  { value: 'inactiva', label: 'Inactiva' }
+                ]}
+              />
             </div>
 
             <div>
@@ -335,18 +389,12 @@ export default function AdminPropiedadForm() {
             </div>
 
             <div className="md:col-span-2">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  name="destacada"
-                  checked={formData.destacada}
-                  onChange={handleChange}
-                  className="w-4 h-4 text-jo-pink rounded focus:ring-jo-pink"
-                />
-                <span className="text-sm font-medium text-jo-darkText\">
-                  Marcar como propiedad destacada
-                </span>
-              </label>
+              <CustomCheckbox
+                name="destacada"
+                checked={formData.destacada}
+                onChange={handleChange}
+                label="Marcar como propiedad destacada"
+              />
             </div>
 
             <div className="md:col-span-2">
@@ -528,24 +576,21 @@ export default function AdminPropiedadForm() {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {todasCaracteristicas.map((caracteristica) => (
-                <label
+                <div
                   key={caracteristica.idCaracteristica}
-                  className={`flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                  className={`p-3 rounded-lg border-2 transition-all ${
                     caracteristicasSeleccionadas.includes(caracteristica.idCaracteristica)
                       ? 'border-jo-pink bg-jo-pink/10'
                       : 'border-jo-darkBorder hover:border-jo-pink/50'
                   }`}
                 >
-                  <input
-                    type="checkbox"
+                  <CustomCheckbox
+                    name={`caracteristica-${caracteristica.idCaracteristica}`}
                     checked={caracteristicasSeleccionadas.includes(caracteristica.idCaracteristica)}
                     onChange={() => toggleCaracteristica(caracteristica.idCaracteristica)}
-                    className="w-4 h-4 text-jo-pink rounded focus:ring-jo-pink"
+                    label={caracteristica.nombre}
                   />
-                  <span className="text-sm font-medium text-jo-darkText">
-                    {caracteristica.nombre}
-                  </span>
-                </label>
+                </div>
               ))}
             </div>
           )}
