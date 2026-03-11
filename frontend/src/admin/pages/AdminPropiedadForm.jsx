@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { FiSave, FiX, FiUpload, FiTrash2 } from 'react-icons/fi';
+import { FiSave, FiX, FiUpload, FiTrash2, FiImage } from 'react-icons/fi';
 import { propiedadService } from '../../services/propiedadService';
 import { imagenService } from '../../services/imagenService';
+import { caracteristicaService } from '../../services/caracteristicaService';
+
+const MAX_IMAGES = 10;
 
 export default function AdminPropiedadForm() {
   const { id } = useParams();
@@ -34,12 +37,25 @@ export default function AdminPropiedadForm() {
   });
   const [imagenes, setImagenes] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [previewUrls, setPreviewUrls] = useState([]);
+  const [todasCaracteristicas, setTodasCaracteristicas] = useState([]);
+  const [caracteristicasSeleccionadas, setCaracteristicasSeleccionadas] = useState([]);
 
   useEffect(() => {
+    loadCaracteristicas();
     if (isEdit) {
       loadPropiedad();
     }
   }, [id]);
+
+  const loadCaracteristicas = async () => {
+    try {
+      const response = await caracteristicaService.getAll();
+      setTodasCaracteristicas(response.data || []);
+    } catch (error) {
+      console.error('Error al cargar características:', error);
+    }
+  };
 
   const loadPropiedad = async () => {
     try {
@@ -50,6 +66,9 @@ export default function AdminPropiedadForm() {
         destacada: !!propiedad.destacada
       });
       setImagenes(propiedad.imagenes || []);
+      setCaracteristicasSeleccionadas(
+        (propiedad.caracteristicas || []).map(c => c.idCaracteristica)
+      );
     } catch (error) {
       alert('Error al cargar la propiedad');
       navigate('/admin/propiedades');
@@ -66,11 +85,36 @@ export default function AdminPropiedadForm() {
 
   const handleFileSelect = (e) => {
     const files = Array.from(e.target.files);
+    const remaining = MAX_IMAGES - selectedFiles.length - imagenes.length;
+    
+    if (files.length > remaining) {
+      alert(`Solo puedes agregar ${remaining} imagen(es) más. Máximo ${MAX_IMAGES} en total.`);
+      return;
+    }
+
     setSelectedFiles([...selectedFiles, ...files]);
+    
+    // Crear URLs de preview
+    const newPreviewUrls = files.map(file => URL.createObjectURL(file));
+    setPreviewUrls([...previewUrls, ...newPreviewUrls]);
   };
 
   const removeSelectedFile = (index) => {
+    // Revocar URL de preview
+    URL.revokeObjectURL(previewUrls[index]);
+    
     setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
+    setPreviewUrls(previewUrls.filter((_, i) => i !== index));
+  };
+
+  const toggleCaracteristica = (idCaracteristica) => {
+    if (caracteristicasSeleccionadas.includes(idCaracteristica)) {
+      setCaracteristicasSeleccionadas(
+        caracteristicasSeleccionadas.filter(id => id !== idCaracteristica)
+      );
+    } else {
+      setCaracteristicasSeleccionadas([...caracteristicasSeleccionadas, idCaracteristica]);
+    }
   };
 
   const handleUploadImages = async (propiedadId) => {
@@ -112,9 +156,31 @@ export default function AdminPropiedadForm() {
       if (isEdit) {
         await propiedadService.update(id, formData);
         propiedadId = id;
+        
+        // Actualizar características (eliminar todas y volver a vincular)
+        const caracteristicasActuales = (await propiedadService.getById(id)).data.caracteristicas || [];
+        
+        // Desvincular las que ya no están seleccionadas
+        for (const caract of caracteristicasActuales) {
+          if (!caracteristicasSeleccionadas.includes(caract.idCaracteristica)) {
+            await caracteristicaService.removeFromPropiedad(propiedadId, caract.idCaracteristica);
+          }
+        }
+        
+        // Vincular las nuevas
+        for (const idCaract of caracteristicasSeleccionadas) {
+          if (!caracteristicasActuales.find(c => c.idCaracteristica === idCaract)) {
+            await caracteristicaService.addToPropiedad(propiedadId, idCaract);
+          }
+        }
       } else {
         const response = await propiedadService.create(formData);
         propiedadId = response.data.id;
+        
+        // Vincular características seleccionadas
+        for (const idCaract of caracteristicasSeleccionadas) {
+          await caracteristicaService.addToPropiedad(propiedadId, idCaract);
+        }
       }
 
       // Subir imágenes si hay archivos seleccionados
@@ -448,9 +514,51 @@ export default function AdminPropiedadForm() {
           </div>
         </div>
 
+        {/* Características */}
+        <div className="bg-white rounded-xl shadow-premium p-6">
+          <h3 className="text-lg font-semibold text-jo-dark mb-4">Características</h3>
+          
+          {todasCaracteristicas.length === 0 ? (
+            <p className="text-jo-textMuted text-sm">
+              No hay características disponibles. 
+              <a href="/admin/caracteristicas" className="text-jo-pink hover:underline ml-1">
+                Crear características
+              </a>
+            </p>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {todasCaracteristicas.map((caracteristica) => (
+                <label
+                  key={caracteristica.idCaracteristica}
+                  className={`flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                    caracteristicasSeleccionadas.includes(caracteristica.idCaracteristica)
+                      ? 'border-jo-pink bg-jo-pink/5'
+                      : 'border-jo-border hover:border-jo-pink/50'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={caracteristicasSeleccionadas.includes(caracteristica.idCaracteristica)}
+                    onChange={() => toggleCaracteristica(caracteristica.idCaracteristica)}
+                    className="w-4 h-4 text-jo-pink rounded focus:ring-jo-pink"
+                  />
+                  <span className="text-sm font-medium text-jo-dark">
+                    {caracteristica.nombre}
+                  </span>
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Imágenes */}
         <div className="bg-white rounded-xl shadow-premium p-6">
-          <h3 className="text-lg font-semibold text-jo-dark mb-4">Imágenes</h3>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold text-jo-dark">Imágenes</h3>
+            <span className="text-sm text-jo-textMuted">
+              {imagenes.length + selectedFiles.length} / {MAX_IMAGES} imágenes
+            </span>
+          </div>
           
           {/* Imágenes existentes (solo en modo edición) */}
           {isEdit && imagenes.length > 0 && (
@@ -482,13 +590,39 @@ export default function AdminPropiedadForm() {
             </div>
           )}
 
-          {/* Selector de archivos */}
-          <div>
-            <label className="block text-sm font-medium text-jo-dark mb-2">
-              Subir nuevas imágenes
-            </label>
-            <div className="border-2 border-dashed border-jo-border rounded-lg p-8 text-center">
-              <FiUpload className="mx-auto mb-4 text-jo-textMuted" size={48} />
+          {/* Preview de imágenes seleccionadas */}
+          {selectedFiles.length > 0 && (
+            <div className="mb-6">
+              <h4 className="text-sm font-medium text-jo-dark mb-3">
+                Nuevas imágenes ({selectedFiles.length})
+              </h4>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {selectedFiles.map((file, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={previewUrls[index]}
+                      alt={file.name}
+                      className="w-full h-32 object-cover rounded-lg"
+                    />
+                    <div className="absolute bottom-2 left-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded truncate">
+                      {file.name}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeSelectedFile(index)}
+                      className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <FiTrash2 size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Área de upload clickeable */}
+          {(imagenes.length + selectedFiles.length) < MAX_IMAGES && (
+            <div>
               <input
                 type="file"
                 accept="image/*"
@@ -499,38 +633,41 @@ export default function AdminPropiedadForm() {
               />
               <label
                 htmlFor="file-upload"
-                className="cursor-pointer text-jo-pink hover:text-jo-pinkHover font-medium"
+                className="block border-2 border-dashed border-jo-border hover:border-jo-pink rounded-lg p-8 text-center cursor-pointer transition-all hover:bg-jo-surface/50"
               >
-                Seleccionar imágenes
+                <div className="flex flex-col items-center gap-3">
+                  <div className="bg-jo-surface p-4 rounded-full">
+                    <FiImage className="text-jo-pink" size={32} />
+                  </div>
+                  <div>
+                    <p className="text-jo-pink hover:text-jo-pinkHover font-medium">
+                      Click para seleccionar imágenes
+                    </p>
+                    <p className="text-xs text-jo-textMuted mt-2">
+                      o arrastra y suelta aquí
+                    </p>
+                  </div>
+                  <div className="text-xs text-jo-textMuted">
+                    <p>JPG, PNG, GIF, WEBP - Máx. 5MB por imagen</p>
+                    <p className="mt-1">
+                      Puedes subir {MAX_IMAGES - imagenes.length - selectedFiles.length} imagen(es) más
+                    </p>
+                  </div>
+                </div>
               </label>
-              <p className="text-xs text-jo-textMuted mt-2">
-                JPG, PNG, GIF, WEBP - Máx. 5MB por imagen
+            </div>
+          )}
+
+          {(imagenes.length + selectedFiles.length) >= MAX_IMAGES && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
+              <p className="text-yellow-700 text-sm font-medium">
+                Has alcanzado el límite máximo de {MAX_IMAGES} imágenes
+              </p>
+              <p className="text-yellow-600 text-xs mt-1">
+                Elimina alguna imagen existente para agregar más
               </p>
             </div>
-
-            {/* Preview de archivos seleccionados */}
-            {selectedFiles.length > 0 && (
-              <div className="mt-4">
-                <h4 className="text-sm font-medium text-jo-dark mb-3">
-                  Archivos seleccionados ({selectedFiles.length})
-                </h4>
-                <div className="space-y-2">
-                  {selectedFiles.map((file, index) => (
-                    <div key={index} className="flex items-center justify-between bg-jo-surface p-3 rounded-lg">
-                      <span className="text-sm text-jo-dark truncate">{file.name}</span>
-                      <button
-                        type="button"
-                        onClick={() => removeSelectedFile(index)}
-                        className="text-red-500 hover:bg-red-50 p-1 rounded"
-                      >
-                        <FiX size={18} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          )}
         </div>
 
         {/* Botones de acción */}

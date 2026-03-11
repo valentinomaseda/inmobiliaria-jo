@@ -109,6 +109,9 @@ export const create = async (req, res, next) => {
       latitud, longitud, estado, destacada
     } = req.body;
 
+    // Convertir strings vacíos a null
+    const parseNullable = (value) => value === '' || value === undefined || value === null ? null : value;
+
     // Insertar propiedad
     const [result] = await connection.query(
       `INSERT INTO propiedad 
@@ -116,9 +119,27 @@ export const create = async (req, res, next) => {
         direccion, numero, piso, depto, barrio, ciudad, provincia, codigo_postal,
         latitud, longitud, estado, destacada)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [nombre, valor, descripcion, cantAmbientes, metCuad, operacion, tipo,
-       direccion, numero, piso, depto, barrio, ciudad, provincia, codigo_postal,
-       latitud, longitud, estado || 'disponible', destacada || 0]
+      [
+        nombre, 
+        valor, 
+        parseNullable(descripcion), 
+        parseNullable(cantAmbientes), 
+        parseNullable(metCuad), 
+        operacion, 
+        tipo,
+        parseNullable(direccion), 
+        parseNullable(numero), 
+        parseNullable(piso), 
+        parseNullable(depto), 
+        parseNullable(barrio), 
+        parseNullable(ciudad), 
+        parseNullable(provincia), 
+        parseNullable(codigo_postal),
+        parseNullable(latitud), 
+        parseNullable(longitud), 
+        estado || 'disponible', 
+        destacada || 0
+      ]
     );
 
     const propiedadId = result.insertId;
@@ -148,6 +169,9 @@ export const update = async (req, res, next) => {
       latitud, longitud, estado, destacada
     } = req.body;
 
+    // Convertir strings vacíos a null
+    const parseNullable = (value) => value === '' || value === undefined || value === null ? null : value;
+
     const [result] = await pool.query(
       `UPDATE propiedad SET
        nombre = ?, valor = ?, descripcion = ?, cantAmbientes = ?, metCuad = ?,
@@ -155,9 +179,28 @@ export const update = async (req, res, next) => {
        barrio = ?, ciudad = ?, provincia = ?, codigo_postal = ?,
        latitud = ?, longitud = ?, estado = ?, destacada = ?
        WHERE idPropiedad = ?`,
-      [nombre, valor, descripcion, cantAmbientes, metCuad, operacion, tipo,
-       direccion, numero, piso, depto, barrio, ciudad, provincia, codigo_postal,
-       latitud, longitud, estado, destacada, id]
+      [
+        nombre, 
+        valor, 
+        parseNullable(descripcion), 
+        parseNullable(cantAmbientes), 
+        parseNullable(metCuad), 
+        operacion, 
+        tipo,
+        parseNullable(direccion), 
+        parseNullable(numero), 
+        parseNullable(piso), 
+        parseNullable(depto), 
+        parseNullable(barrio), 
+        parseNullable(ciudad), 
+        parseNullable(provincia), 
+        parseNullable(codigo_postal),
+        parseNullable(latitud), 
+        parseNullable(longitud), 
+        estado, 
+        destacada, 
+        id
+      ]
     );
 
     if (result.affectedRows === 0) {
