@@ -6,6 +6,7 @@ import { imagenService } from '../../services/imagenService';
 import { caracteristicaService } from '../../services/caracteristicaService';
 import CustomSelect from '../components/CustomSelect';
 import CustomCheckbox from '../components/CustomCheckbox';
+import { useAlert } from '../../contexts/AlertContext';
 
 const MAX_IMAGES = 10;
 
@@ -13,6 +14,7 @@ export default function AdminPropiedadForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEdit = !!id;
+  const { success, error: showError } = useAlert();
 
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -44,6 +46,7 @@ export default function AdminPropiedadForm() {
   const [previewUrls, setPreviewUrls] = useState([]);
   const [todasCaracteristicas, setTodasCaracteristicas] = useState([]);
   const [caracteristicasSeleccionadas, setCaracteristicasSeleccionadas] = useState([]);
+  const [deleteImageModal, setDeleteImageModal] = useState({ isOpen: false, imagenId: null });
 
   useEffect(() => {
     loadCaracteristicas();
@@ -58,6 +61,7 @@ export default function AdminPropiedadForm() {
       setTodasCaracteristicas(response.data || []);
     } catch (error) {
       console.error('Error al cargar características:', error);
+      showError('Error al cargar las características');
     }
   };
 
@@ -79,7 +83,7 @@ export default function AdminPropiedadForm() {
         (propiedad.caracteristicas || []).map(c => c.idCaracteristica)
       );
     } catch (error) {
-      alert('Error al cargar la propiedad');
+      showError('Error al cargar la propiedad');
       navigate('/admin/propiedades');
     }
   };
@@ -166,21 +170,28 @@ export default function AdminPropiedadForm() {
         await loadPropiedad();
       }
     } catch (error) {
-      alert('Error al subir imágenes');
+      showError('Error al subir las imágenes');
       console.error(error);
     } finally {
       setUploading(false);
     }
   };
 
-  const handleDeleteImage = async (idImagen) => {
-    if (!window.confirm('¿Eliminar esta imagen?')) return;
+  const openDeleteImageModal = (idImagen) => {
+    setDeleteImageModal({ isOpen: true, imagenId: idImagen });
+  };
 
+  const closeDeleteImageModal = () => {
+    setDeleteImageModal({ isOpen: false, imagenId: null });
+  };
+
+  const handleDeleteImage = async () => {
     try {
-      await imagenService.delete(idImagen);
+      await imagenService.delete(deleteImageModal.imagenId);
+      success('Imagen eliminada correctamente');
       await loadPropiedad();
     } catch (error) {
-      alert('Error al eliminar imagen');
+      showError('Error al eliminar la imagen');
     }
   };
 
@@ -226,9 +237,10 @@ export default function AdminPropiedadForm() {
         await handleUploadImages(propiedadId);
       }
 
+      success(isEdit ? 'Propiedad actualizada correctamente' : 'Propiedad creada correctamente');
       navigate('/admin/propiedades');
     } catch (error) {
-      alert('Error al guardar la propiedad');
+      showError('Error al guardar la propiedad');
       console.error(error);
     } finally {
       setLoading(false);
@@ -624,7 +636,7 @@ export default function AdminPropiedadForm() {
                     )}
                     <button
                       type="button"
-                      onClick={() => handleDeleteImage(imagen.idImagen)}
+                      onClick={() => openDeleteImageModal(imagen.idImagen)}
                       className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       <FiTrash2 size={16} />

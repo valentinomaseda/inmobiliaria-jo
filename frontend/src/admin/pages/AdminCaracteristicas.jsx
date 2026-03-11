@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FiPlus, FiEdit2, FiTrash2, FiTag } from 'react-icons/fi';
 import { caracteristicaService } from '../../services/caracteristicaService';
+import ConfirmModal from '../../components/ConfirmModal';
+import { useAlert } from '../../contexts/AlertContext';
 
 export default function AdminCaracteristicas() {
   const [caracteristicas, setCaracteristicas] = useState([]);
@@ -8,6 +10,8 @@ export default function AdminCaracteristicas() {
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ nombre: '', descripcion: '' });
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, caracteristicaId: null, caracteristicaNombre: '' });
+  const { success, error: showError } = useAlert();
 
   useEffect(() => {
     loadCaracteristicas();
@@ -19,6 +23,7 @@ export default function AdminCaracteristicas() {
       setCaracteristicas(response.data || []);
     } catch (error) {
       console.error('Error al cargar características:', error);
+      showError('Error al cargar las características');
     } finally {
       setLoading(false);
     }
@@ -30,8 +35,10 @@ export default function AdminCaracteristicas() {
     try {
       if (editingId) {
         await caracteristicaService.update(editingId, formData);
+        success('Característica actualizada correctamente');
       } else {
         await caracteristicaService.create(formData);
+        success('Característica creada correctamente');
       }
       
       setShowModal(false);
@@ -39,7 +46,7 @@ export default function AdminCaracteristicas() {
       setEditingId(null);
       loadCaracteristicas();
     } catch (error) {
-      alert('Error al guardar característica');
+      showError('Error al guardar la característica');
       console.error(error);
     }
   };
@@ -53,16 +60,21 @@ export default function AdminCaracteristicas() {
     setShowModal(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('¿Estás seguro de eliminar esta característica?')) {
-      return;
-    }
+  const openDeleteModal = (id, nombre) => {
+    setDeleteModal({ isOpen: true, caracteristicaId: id, caracteristicaNombre: nombre });
+  };
 
+  const closeDeleteModal = () => {
+    setDeleteModal({ isOpen: false, caracteristicaId: null, caracteristicaNombre: '' });
+  };
+
+  const handleDelete = async () => {
     try {
-      await caracteristicaService.delete(id);
+      await caracteristicaService.delete(deleteModal.caracteristicaId);
+      success(`Característica "${deleteModal.caracteristicaNombre}" eliminada correctamente`);
       loadCaracteristicas();
     } catch (error) {
-      alert('Error al eliminar característica. Puede que esté vinculada a propiedades.');
+      showError('Error al eliminar la característica. Puede que esté vinculada a propiedades.');
       console.error(error);
     }
   };
@@ -132,7 +144,7 @@ export default function AdminCaracteristicas() {
                       <FiEdit2 size={14} className="sm:w-4 sm:h-4" />
                     </button>
                     <button
-                      onClick={() => handleDelete(caracteristica.idCaracteristica)}
+                      onClick={() => openDeleteModal(caracteristica.idCaracteristica, caracteristica.nombre)}
                       className="p-1.5 sm:p-2 text-red-400 hover:bg-red-900/20 rounded-lg transition-colors"
                       title="Eliminar"
                     >
@@ -201,6 +213,18 @@ export default function AdminCaracteristicas() {
           </div>
         </div>
       )}
+
+      {/* Modal de confirmación de eliminación */}
+      <ConfirmModal
+        isOpen={deleteModal.isOpen}
+        onClose={closeDeleteModal}
+        onConfirm={handleDelete}
+        title="Eliminar característica"
+        message={`¿Estás seguro de que deseas eliminar la característica "${deleteModal.caracteristicaNombre}"? Si está vinculada a propiedades, no podrá ser eliminada.`}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        type="danger"
+      />
     </div>
   );
 }

@@ -4,6 +4,8 @@ import { FiPlus, FiEdit2, FiTrash2, FiSearch } from 'react-icons/fi';
 import { propiedadService } from '../../services/propiedadService';
 import { imagenService } from '../../services/imagenService';
 import CustomSelect from '../components/CustomSelect';
+import ConfirmModal from '../../components/ConfirmModal';
+import { useAlert } from '../../contexts/AlertContext';
 
 export default function AdminPropiedades() {
   const [propiedades, setPropiedades] = useState([]);
@@ -13,6 +15,8 @@ export default function AdminPropiedades() {
     tipo: '',
     estado: ''
   });
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, propiedadId: null, propiedadNombre: '' });
+  const { success, error: showError } = useAlert();
 
   useEffect(() => {
     loadPropiedades();
@@ -24,22 +28,28 @@ export default function AdminPropiedades() {
       setPropiedades(response.data || []);
     } catch (error) {
       console.error('Error al cargar propiedades:', error);
+      showError('Error al cargar las propiedades');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('¿Estás seguro de eliminar esta propiedad?')) {
-      return;
-    }
+  const openDeleteModal = (id, nombre) => {
+    setDeleteModal({ isOpen: true, propiedadId: id, propiedadNombre: nombre });
+  };
 
+  const closeDeleteModal = () => {
+    setDeleteModal({ isOpen: false, propiedadId: null, propiedadNombre: '' });
+  };
+
+  const handleDelete = async () => {
     try {
-      await propiedadService.delete(id);
+      await propiedadService.delete(deleteModal.propiedadId);
+      success(`Propiedad "${deleteModal.propiedadNombre}" eliminada correctamente`);
       loadPropiedades();
     } catch (error) {
-      alert('Error al eliminar la propiedad');
       console.error(error);
+      showError('Error al eliminar la propiedad. Puede que tenga datos vinculados.');
     }
   };
 
@@ -229,7 +239,7 @@ export default function AdminPropiedades() {
                             <FiEdit2 size={16} className="sm:w-[18px] sm:h-[18px]" />
                           </Link>
                           <button
-                            onClick={() => handleDelete(propiedad.idPropiedad)}
+                            onClick={() => openDeleteModal(propiedad.idPropiedad, propiedad.nombre)}
                             className="p-1.5 sm:p-2 text-red-400 hover:bg-red-900/20 rounded-lg transition-colors"
                             title="Eliminar"
                           >
@@ -245,6 +255,18 @@ export default function AdminPropiedades() {
           </div>
         )}
       </div>
+
+      {/* Modal de confirmación de eliminación */}
+      <ConfirmModal
+        isOpen={deleteModal.isOpen}
+        onClose={closeDeleteModal}
+        onConfirm={handleDelete}
+        title="Eliminar propiedad"
+        message={`¿Estás seguro de que deseas eliminar la propiedad "${deleteModal.propiedadNombre}"? Esta acción no se puede deshacer.`}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        type="danger"
+      />
     </div>
   );
 }
