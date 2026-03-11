@@ -46,10 +46,10 @@ export default function AdminPropiedades() {
     <div>
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-3xl font-display font-bold text-jo-dark mb-2">
+          <h2 className="text-3xl font-display font-bold text-jo-darkText mb-2">
             Propiedades
           </h2>
-          <p className="text-jo-textMuted">
+          <p className="text-jo-darkTextMuted">
             Gestiona todas las propiedades de la inmobiliaria
           </p>
         </div>
@@ -63,16 +63,16 @@ export default function AdminPropiedades() {
       </div>
 
       {/* Filtros */}
-      <div className="bg-white rounded-xl shadow-premium p-6 mb-6">
+      <div className="bg-jo-darkSurface rounded-xl shadow-premium-dark p-6 mb-6 border border-jo-darkBorder">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-sm font-medium text-jo-dark mb-2">
+            <label className="block text-sm font-medium text-jo-darkText mb-2">
               Operación
             </label>
             <select
               value={filtros.operacion}
               onChange={(e) => setFiltros({ ...filtros, operacion: e.target.value })}
-              className="w-full px-4 py-2 border border-jo-border rounded-lg focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
+              className="w-full px-4 py-2 bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
             >
               <option value="">Todas</option>
               <option value="venta">Venta</option>
@@ -82,13 +82,13 @@ export default function AdminPropiedades() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-jo-dark mb-2">
+            <label className="block text-sm font-medium text-jo-darkText mb-2">
               Tipo
             </label>
             <select
               value={filtros.tipo}
               onChange={(e) => setFiltros({ ...filtros, tipo: e.target.value })}
-              className="w-full px-4 py-2 border border-jo-border rounded-lg focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
+              className="w-full px-4 py-2 bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
             >
               <option value="">Todos</option>
               <option value="casa">Casa</option>
@@ -102,13 +102,13 @@ export default function AdminPropiedades() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-jo-dark mb-2">
+            <label className="block text-sm font-medium text-jo-darkText mb-2">
               Estado
             </label>
             <select
               value={filtros.estado}
               onChange={(e) => setFiltros({ ...filtros, estado: e.target.value })}
-              className="w-full px-4 py-2 border border-jo-border rounded-lg focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
+              className="w-full px-4 py-2 bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
             >
               <option value="">Todos</option>
               <option value="disponible">Disponible</option>
@@ -122,7 +122,7 @@ export default function AdminPropiedades() {
           <div className="flex items-end">
             <button
               onClick={() => setFiltros({ operacion: '', tipo: '', estado: '' })}
-              className="w-full px-4 py-2 border border-jo-border rounded-lg hover:bg-jo-surface transition-colors"
+              className="w-full px-4 py-2 border border-jo-darkBorder text-jo-darkText rounded-lg hover:bg-jo-darkCard transition-colors"
             >
               Limpiar filtros
             </button>
@@ -131,40 +131,40 @@ export default function AdminPropiedades() {
       </div>
 
       {/* Lista de propiedades */}
-      <div className="bg-white rounded-xl shadow-premium overflow-hidden">
+      <div className="bg-jo-darkSurface rounded-xl shadow-premium-dark overflow-hidden border border-jo-darkBorder">
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jo-pink"></div>
           </div>
         ) : propiedades.length === 0 ? (
-          <div className="text-center py-12 text-jo-textMuted">
+          <div className="text-center py-12 text-jo-darkTextMuted">
             <FiSearch size={48} className="mx-auto mb-4 opacity-30" />
             <p>No se encontraron propiedades</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-jo-surface">
+              <thead className="bg-jo-darkCard">
                 <tr>
-                  <th className="text-left py-4 px-6 text-jo-dark font-semibold text-sm">
+                  <th className="text-left py-4 px-6 text-jo-darkText font-semibold text-sm">
                     Imagen
                   </th>
-                  <th className="text-left py-4 px-6 text-jo-dark font-semibold text-sm">
+                  <th className="text-left py-4 px-6 text-jo-darkText font-semibold text-sm">
                     Nombre
                   </th>
-                  <th className="text-left py-4 px-6 text-jo-dark font-semibold text-sm">
+                  <th className="text-left py-4 px-6 text-jo-darkText font-semibold text-sm">
                     Tipo
                   </th>
-                  <th className="text-left py-4 px-6 text-jo-dark font-semibold text-sm">
+                  <th className="text-left py-4 px-6 text-jo-darkText font-semibold text-sm">
                     Operación
                   </th>
-                  <th className="text-left py-4 px-6 text-jo-dark font-semibold text-sm">
+                  <th className="text-left py-4 px-6 text-jo-darkText font-semibold text-sm">
                     Precio
                   </th>
-                  <th className="text-left py-4 px-6 text-jo-dark font-semibold text-sm">
+                  <th className="text-left py-4 px-6 text-jo-darkText font-semibold text-sm">
                     Estado
                   </th>
-                  <th className="text-left py-4 px-6 text-jo-dark font-semibold text-sm">
+                  <th className="text-left py-4 px-6 text-jo-darkText font-semibold text-sm">
                     Acciones
                   </th>
                 </tr>
@@ -174,7 +174,7 @@ export default function AdminPropiedades() {
                   const imagenPrincipal = propiedad.imagenes?.find(img => img.es_principal) || propiedad.imagenes?.[0];
                   
                   return (
-                    <tr key={propiedad.idPropiedad} className="border-b border-jo-border hover:bg-jo-surface/50 transition-colors">
+                    <tr key={propiedad.idPropiedad} className="border-b border-jo-darkBorder hover:bg-jo-darkCard transition-colors">
                       <td className="py-4 px-6">
                         {imagenPrincipal ? (
                           <img
@@ -183,30 +183,30 @@ export default function AdminPropiedades() {
                             className="w-16 h-16 object-cover rounded-lg"
                           />
                         ) : (
-                          <div className="w-16 h-16 bg-jo-surface rounded-lg flex items-center justify-center text-jo-textMuted">
+                          <div className="w-16 h-16 bg-jo-darkCard rounded-lg flex items-center justify-center text-jo-darkTextMuted">
                             <FiSearch size={24} />
                           </div>
                         )}
                       </td>
-                      <td className="py-4 px-6 font-medium text-jo-dark">
+                      <td className="py-4 px-6 font-medium text-jo-darkText">
                         {propiedad.nombre}
                       </td>
-                      <td className="py-4 px-6 text-jo-textMuted capitalize">
+                      <td className="py-4 px-6 text-jo-darkTextMuted capitalize">
                         {propiedad.tipo}
                       </td>
-                      <td className="py-4 px-6 text-jo-textMuted capitalize">
+                      <td className="py-4 px-6 text-jo-darkTextMuted capitalize">
                         {propiedad.operacion}
                       </td>
-                      <td className="py-4 px-6 font-medium text-jo-dark">
+                      <td className="py-4 px-6 font-medium text-jo-darkText">
                         ${Number(propiedad.valor).toLocaleString()}
                       </td>
                       <td className="py-4 px-6">
                         <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
                           propiedad.estado === 'disponible' 
-                            ? 'bg-green-100 text-green-700'
+                            ? 'bg-green-900/30 text-green-400 border border-green-700/50'
                             : propiedad.estado === 'reservada'
-                            ? 'bg-yellow-100 text-yellow-700'
-                            : 'bg-gray-100 text-gray-700'
+                            ? 'bg-yellow-900/30 text-yellow-400 border border-yellow-700/50'
+                            : 'bg-gray-700/30 text-gray-400 border border-gray-600/50'
                         }`}>
                           {propiedad.estado}
                         </span>

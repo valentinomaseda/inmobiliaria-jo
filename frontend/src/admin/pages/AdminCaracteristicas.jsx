@@ -77,10 +77,10 @@ export default function AdminCaracteristicas() {
     <div>
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-3xl font-display font-bold text-jo-dark mb-2">
+          <h2 className="text-3xl font-display font-bold text-jo-darkText mb-2">
             Características
           </h2>
-          <p className="text-jo-textMuted">
+          <p className="text-jo-darkTextMuted">
             Gestiona las características que pueden tener las propiedades
           </p>
         </div>
@@ -94,13 +94,13 @@ export default function AdminCaracteristicas() {
       </div>
 
       {/* Lista de características */}
-      <div className="bg-white rounded-xl shadow-premium overflow-hidden">
+      <div className="bg-jo-darkSurface rounded-xl shadow-premium-dark overflow-hidden border border-jo-darkBorder">
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jo-pink"></div>
           </div>
         ) : caracteristicas.length === 0 ? (
-          <div className="text-center py-12 text-jo-textMuted">
+          <div className="text-center py-12 text-jo-darkTextMuted">
             <FiTag size={48} className="mx-auto mb-4 opacity-30" />
             <p>No hay características registradas</p>
           </div>
@@ -109,15 +109,15 @@ export default function AdminCaracteristicas() {
             {caracteristicas.map((caracteristica) => (
               <div
                 key={caracteristica.idCaracteristica}
-                className="bg-jo-surface border border-jo-border rounded-lg p-4 hover:shadow-md transition-shadow"
+                className="bg-jo-darkCard border border-jo-darkBorder rounded-lg p-4 hover:shadow-md transition-shadow"
               >
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-jo-dark mb-1">
+                    <h3 className="font-semibold text-jo-darkText mb-1">
                       {caracteristica.nombre}
                     </h3>
                     {caracteristica.descripcion && (
-                      <p className="text-sm text-jo-textMuted">
+                      <p className="text-sm text-jo-darkTextMuted">
                         {caracteristica.descripcion}
                       </p>
                     )}
@@ -125,14 +125,14 @@ export default function AdminCaracteristicas() {
                   <div className="flex gap-2 ml-2">
                     <button
                       onClick={() => handleEdit(caracteristica)}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      className="p-2 text-blue-400 hover:bg-blue-900/20 rounded-lg transition-colors"
                       title="Editar"
                     >
                       <FiEdit2 size={16} />
                     </button>
                     <button
                       onClick={() => handleDelete(caracteristica.idCaracteristica)}
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      className="p-2 text-red-400 hover:bg-red-900/20 rounded-lg transition-colors"
                       title="Eliminar"
                     >
                       <FiTrash2 size={16} />
@@ -147,36 +147,36 @@ export default function AdminCaracteristicas() {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-premium max-w-md w-full p-6">
-            <h3 className="text-xl font-display font-bold text-jo-dark mb-4">
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+          <div className="bg-jo-darkSurface border border-jo-darkBorder rounded-xl shadow-premium-dark max-w-md w-full p-6">
+            <h3 className="text-xl font-display font-bold text-jo-darkText mb-4">
               {editingId ? 'Editar Característica' : 'Nueva Característica'}
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-jo-dark mb-2">
+                <label className="block text-sm font-medium text-jo-darkText mb-2">
                   Nombre *
                 </label>
                 <input
                   type="text"
                   value={formData.nombre}
                   onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-                  className="w-full px-4 py-2 border border-jo-border rounded-lg focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none placeholder:text-jo-darkTextMuted"
                   placeholder="Ej: Piscina, Garage, Quincho"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-jo-dark mb-2">
+                <label className="block text-sm font-medium text-jo-darkText mb-2">
                   Descripción
                 </label>
                 <textarea
                   value={formData.descripcion}
                   onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
                   rows="3"
-                  className="w-full px-4 py-2 border border-jo-border rounded-lg focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none resize-none"
+                  className="w-full px-4 py-2 bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none resize-none placeholder:text-jo-darkTextMuted"
                   placeholder="Descripción opcional..."
                 ></textarea>
               </div>
@@ -185,7 +185,7 @@ export default function AdminCaracteristicas() {
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="px-4 py-2 border border-jo-border rounded-lg hover:bg-jo-surface transition-colors"
+                  className="px-4 py-2 border border-jo-darkBorder text-jo-darkText rounded-lg hover:bg-jo-darkCard transition-colors"
                 >
                   Cancelar
                 </button>

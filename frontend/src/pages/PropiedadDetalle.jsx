@@ -1,16 +1,75 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { propiedades } from '../data/propiedades';
+import { propiedadService } from '../services/propiedadService';
+import { imagenService } from '../services/imagenService';
 
 export default function PropiedadDetalle() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const propiedad = propiedades.find(p => p.id === parseInt(id));
-  
+  const [propiedad, setPropiedad] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [imagenActual, setImagenActual] = useState(0);
   const [lightboxAbierto, setLightboxAbierto] = useState(false);
+  const [propiedadesRelacionadas, setPropiedadesRelacionadas] = useState([]);
 
-  const imagenes = propiedad?.imagenes || [propiedad?.imagen];
+  useEffect(() => {
+    const loadPropiedad = async () => {
+      try {
+        const response = await propiedadService.getById(id);
+        const prop = response.data;
+        
+        // Transformar al formato esperado
+        const propTransformada = {
+          id: prop.idPropiedad,
+          titulo: prop.nombre,
+          ubicacion: `${prop.ciudad || ''}, ${prop.provincia || ''}`.trim().replace(/^,\s*/, ''),
+          direccion: prop.direccion,
+          precio: `$${Number(prop.valor).toLocaleString()}`,
+          tipo: prop.operacion === 'venta' ? 'Venta' : prop.operacion === 'alquiler' ? 'Alquiler' : 'Alquiler temporal',
+          operacion: prop.operacion,
+          ambientes: prop.ambientes || 0,
+          banos: prop.banos || 0,
+          metros: `${prop.superficie_total || 0} m²`,
+          descripcion: prop.descripcion,
+          imagenes: (prop.imagenes || []).map(img => imagenService.getImageUrl(img.url)),
+          caracteristicas: (prop.caracteristicas || []).map(c => c.nombre)
+        };
+        
+        setPropiedad(propTransformada);
+
+        // Cargar propiedades relacionadas (misma operación)
+        const relacionadasResponse = await propiedadService.getAll({ 
+          operacion: prop.operacion,
+          estado: 'disponible'
+        });
+        
+        const relacionadas = (relacionadasResponse.data || [])
+          .filter(p => p.idPropiedad !== prop.idPropiedad)
+          .slice(0, 3)
+          .map(p => {
+            const imagenPrincipal = p.imagenes?.find(img => img.es_principal) || p.imagenes?.[0];
+            return {
+              id: p.idPropiedad,
+              titulo: p.nombre,
+              ubicacion: `${p.ciudad || ''}, ${p.provincia || ''}`.trim().replace(/^,\s*/, ''),
+              precio: `$${Number(p.valor).toLocaleString()}`,
+              tipo: p.operacion === 'venta' ? 'Venta' : p.operacion === 'alquiler' ? 'Alquiler' : 'Alquiler temporal',
+              imagen: imagenPrincipal ? imagenService.getImageUrl(imagenPrincipal.url) : '/placeholder.jpg'
+            };
+          });
+        
+        setPropiedadesRelacionadas(relacionadas);
+      } catch (error) {
+        console.error('Error al cargar propiedad:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPropiedad();
+  }, [id]);
+
+  const imagenes = propiedad?.imagenes || [];
 
   const siguienteImagen = () => {
     setImagenActual((prev) => (prev + 1) % imagenes.length);
@@ -24,6 +83,14 @@ export default function PropiedadDetalle() {
     setImagenActual(index);
     setLightboxAbierto(true);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white pt-28 pb-20 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jo-pink"></div>
+      </div>
+    );
+  }
 
   if (!propiedad) {
     return (
@@ -249,13 +316,11 @@ export default function PropiedadDetalle() {
         </div>
 
         {/* Propiedades Relacionadas */}
-        <div className="mt-20" data-aos="fade-up">
-          <h2 className="text-3xl font-bold text-jo-dark mb-8">Propiedades similares</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {propiedades
-              .filter(p => p.id !== propiedad.id && p.tipo === propiedad.tipo)
-              .slice(0, 3)
-              .map(p => (
+        {propiedadesRelacionadas.length > 0 && (
+          <div className="mt-20" data-aos="fade-up">
+            <h2 className="text-3xl font-bold text-jo-dark mb-8">Propiedades similares</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {propiedadesRelacionadas.map(p => (
                 <Link 
                   key={p.id} 
                   to={`/propiedad/${p.id}`}
@@ -275,8 +340,9 @@ export default function PropiedadDetalle() {
                   </div>
                 </Link>
               ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Lightbox Modal */}

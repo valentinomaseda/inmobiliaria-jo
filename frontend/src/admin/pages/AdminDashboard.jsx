@@ -78,10 +78,10 @@ export default function AdminDashboard() {
   return (
     <div>
       <div className="mb-8">
-        <h2 className="text-3xl font-display font-bold text-jo-dark mb-2">
+        <h2 className="text-3xl font-display font-bold text-jo-darkText mb-2">
           Dashboard
         </h2>
-        <p className="text-jo-textMuted">
+        <p className="text-jo-darkTextMuted">
           Resumen general de la inmobiliaria
         </p>
       </div>
@@ -91,23 +91,23 @@ export default function AdminDashboard() {
         {statCards.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <div key={index} className="bg-white rounded-xl shadow-premium p-6">
+            <div key={index} className="bg-jo-darkSurface rounded-xl shadow-premium-dark p-6 border border-jo-darkBorder">
               <div className="flex items-center justify-between mb-4">
                 <div className={`${stat.color} p-3 rounded-lg text-white`}>
                   <Icon size={24} />
                 </div>
               </div>
-              <p className="text-3xl font-bold text-jo-dark mb-1">{stat.value}</p>
-              <p className="text-sm text-jo-textMuted">{stat.title}</p>
+              <p className="text-3xl font-bold text-jo-darkText mb-1">{stat.value}</p>
+              <p className="text-sm text-jo-darkTextMuted">{stat.title}</p>
             </div>
           );
         })}
       </div>
 
       {/* Propiedades recientes */}
-      <div className="bg-white rounded-xl shadow-premium p-6">
+      <div className="bg-jo-darkSurface rounded-xl shadow-premium-dark p-6 border border-jo-darkBorder">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-display font-bold text-jo-dark">
+          <h3 className="text-xl font-display font-bold text-jo-darkText">
             Propiedades Recientes
           </h3>
           <Link 
@@ -119,7 +119,7 @@ export default function AdminDashboard() {
         </div>
 
         {propiedadesRecientes.length === 0 ? (
-          <div className="text-center py-12 text-jo-textMuted">
+          <div className="text-center py-12 text-jo-darkTextMuted">
             <FiHome size={48} className="mx-auto mb-4 opacity-30" />
             <p>No hay propiedades registradas</p>
             <Link 
@@ -133,46 +133,46 @@ export default function AdminDashboard() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-jo-border">
-                  <th className="text-left py-3 px-4 text-jo-textMuted font-medium text-sm">
+                <tr className="border-b border-jo-darkBorder">
+                  <th className="text-left py-3 px-4 text-jo-darkTextMuted font-medium text-sm">
                     Nombre
                   </th>
-                  <th className="text-left py-3 px-4 text-jo-textMuted font-medium text-sm">
+                  <th className="text-left py-3 px-4 text-jo-darkTextMuted font-medium text-sm">
                     Tipo
                   </th>
-                  <th className="text-left py-3 px-4 text-jo-textMuted font-medium text-sm">
+                  <th className="text-left py-3 px-4 text-jo-darkTextMuted font-medium text-sm">
                     Operación
                   </th>
-                  <th className="text-left py-3 px-4 text-jo-textMuted font-medium text-sm">
+                  <th className="text-left py-3 px-4 text-jo-darkTextMuted font-medium text-sm">
                     Precio
                   </th>
-                  <th className="text-left py-3 px-4 text-jo-textMuted font-medium text-sm">
+                  <th className="text-left py-3 px-4 text-jo-darkTextMuted font-medium text-sm">
                     Estado
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {propiedadesRecientes.map((propiedad) => (
-                  <tr key={propiedad.idPropiedad} className="border-b border-jo-border hover:bg-jo-surface transition-colors">
-                    <td className="py-3 px-4 font-medium text-jo-dark">
+                  <tr key={propiedad.idPropiedad} className="border-b border-jo-darkBorder hover:bg-jo-darkCard transition-colors">
+                    <td className="py-3 px-4 font-medium text-jo-darkText">
                       {propiedad.nombre}
                     </td>
-                    <td className="py-3 px-4 text-jo-textMuted capitalize">
+                    <td className="py-3 px-4 text-jo-darkTextMuted capitalize">
                       {propiedad.tipo}
                     </td>
-                    <td className="py-3 px-4 text-jo-textMuted capitalize">
+                    <td className="py-3 px-4 text-jo-darkTextMuted capitalize">
                       {propiedad.operacion}
                     </td>
-                    <td className="py-3 px-4 font-medium text-jo-dark">
+                    <td className="py-3 px-4 font-medium text-jo-darkText">
                       ${Number(propiedad.valor).toLocaleString()}
                     </td>
                     <td className="py-3 px-4">
                       <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
                         propiedad.estado === 'disponible' 
-                          ? 'bg-green-100 text-green-700'
+                          ? 'bg-green-900/30 text-green-400 border border-green-700/50'
                           : propiedad.estado === 'reservada'
-                          ? 'bg-yellow-100 text-yellow-700'
-                          : 'bg-gray-100 text-gray-700'
+                          ? 'bg-yellow-900/30 text-yellow-400 border border-yellow-700/50'
+                          : 'bg-gray-700/30 text-gray-400 border border-gray-600/50'
                       }`}>
                         {propiedad.estado}
                       </span>

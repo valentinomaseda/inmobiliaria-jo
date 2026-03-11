@@ -1,11 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PropertyCard from '../components/PropertyCard';
-import { propiedades } from '../data/propiedades';
+import { propiedadService } from '../services/propiedadService';
+import { imagenService } from '../services/imagenService';
 
 export default function Catalogo() {
+  const [propiedades, setPropiedades] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [filtroTipo, setFiltroTipo] = useState('Todos');
   const [busqueda, setBusqueda] = useState('');
+
+  useEffect(() => {
+    loadPropiedades();
+  }, []);
+
+  const loadPropiedades = async () => {
+    try {
+      const response = await propiedadService.getAll({ estado: 'disponible' });
+      // Transformar datos del API al formato esperado
+      const propiedadesTransformadas = (response.data || []).map(prop => {
+        const imagenPrincipal = prop.imagenes?.find(img => img.es_principal) || prop.imagenes?.[0];
+        return {
+          id: prop.idPropiedad,
+          titulo: prop.nombre,
+          ubicacion: `${prop.ciudad || ''}, ${prop.provincia || ''}`.trim().replace(/^,\s*/, ''),
+          precio: `$${Number(prop.valor).toLocaleString()}`,
+          tipo: prop.operacion === 'venta' ? 'Venta' : prop.operacion === 'alquiler' ? 'Alquiler' : 'Alquiler temporal',
+          imagen: imagenPrincipal ? imagenService.getImageUrl(imagenPrincipal.url) : '/placeholder.jpg',
+          ambientes: prop.ambientes || 0,
+          banos: prop.banos || 0,
+          metros: `${prop.superficie_total || 0} m²`,
+          destacada: false
+        };
+      });
+      setPropiedades(propiedadesTransformadas);
+    } catch (error) {
+      console.error('Error al cargar propiedades:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Filtrar propiedades
   const propiedadesFiltradas = propiedades.filter(prop => {
@@ -16,6 +50,14 @@ export default function Catalogo() {
     
     return cumpleTipo && cumpleBusqueda;
   });
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white pt-28 pb-20 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jo-pink"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white pt-28 pb-20">
