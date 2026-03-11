@@ -40,6 +40,12 @@ export const imagenService = {
   },
 
   getImageUrl: (url) => {
+    // Con Cloudinary, la URL ya viene completa desde el backend
+    // Si la URL comienza con http/https, es de Cloudinary y la devolvemos directamente
+    if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+      return url;
+    }
+    // Fallback para URLs locales antiguas (retrocompatibilidad)
     return `${API_URL.replace('/api', '')}${url}`;
   }
 };

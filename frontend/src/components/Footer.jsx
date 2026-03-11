@@ -16,7 +16,7 @@ export default function Footer() {
         {/* Logo centrado */}
         <div className="flex justify-center mb-8">
           <img
-            src="/src/public/logo-png.png"
+            src="/src/public/logo-blanco.png"
             alt="Juliana Ortiz Inmobiliaria"
             className="h-20 w-auto object-contain hover:opacity-80 transition-opacity"
           />
@@ -53,7 +53,7 @@ export default function Footer() {
 
           {/* Instagram */}
           <a
-            href="https://instagram.com/julianaortiz"
+            href="https://www.instagram.com/inmobiliaria.julianaortiz/"
             target="_blank"
             rel="noreferrer"
             className="flex flex-col items-center gap-3 p-6 bg-white/5 hover:bg-white/10 rounded-2xl transition-all group"
@@ -64,14 +64,14 @@ export default function Footer() {
             <div className="text-center">
               <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-1">Instagram</p>
               <p className="text-white font-medium group-hover:text-jo-pink transition-colors">
-                @julianaortiz
+                @inmobiliaria.julianaortiz  
               </p>
             </div>
           </a>
 
           {/* Facebook */}
           <a
-            href="https://facebook.com/julianaortiz"
+            href="https://web.facebook.com/JulianaOrtizInmobiliaria?locale=es_LA"
             target="_blank"
             rel="noreferrer"
             className="flex flex-col items-center gap-3 p-6 bg-white/5 hover:bg-white/10 rounded-2xl transition-all group"

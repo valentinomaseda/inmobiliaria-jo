@@ -1,10 +1,5 @@
 import pool from '../config/database.js';
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import cloudinary from '../config/cloudinary.js';
 
 export const uploadImages = async (req, res, next) => {
   try {
@@ -25,9 +20,13 @@ export const uploadImages = async (req, res, next) => {
     );
 
     if (propiedades.length === 0) {
-      // Eliminar archivos subidos
+      // Eliminar archivos de Cloudinary
       for (const file of files) {
-        await fs.unlink(file.path);
+        try {
+          await cloudinary.uploader.destroy(file.filename);
+        } catch (err) {
+          console.error('Error al eliminar de Cloudinary:', err);
+        }
       }
       return res.status(404).json({
         success: false,
@@ -39,7 +38,8 @@ export const uploadImages = async (req, res, next) => {
     const imagenesInsertadas = [];
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const url = `/uploads/propiedades/${file.filename}`;
+      // Cloudinary devuelve la URL en file.path
+      const url = file.path;
       
       const [result] = await pool.query(
         'INSERT INTO imagen (idPropiedad, url, orden, es_principal) VALUES (?, ?, ?, ?)',
@@ -60,13 +60,13 @@ export const uploadImages = async (req, res, next) => {
       data: imagenesInsertadas
     });
   } catch (error) {
-    // Limpiar archivos en caso de error
+    // Limpiar archivos de Cloudinary en caso de error
     if (req.files) {
       for (const file of req.files) {
         try {
-          await fs.unlink(file.path);
+          await cloudinary.uploader.destroy(file.filename);
         } catch (err) {
-          console.error('Error al eliminar archivo:', err);
+          console.error('Error al eliminar de Cloudinary:', err);
         }
       }
     }
@@ -190,12 +190,16 @@ export const remove = async (req, res, next) => {
     // Eliminar de la base de datos
     await pool.query('DELETE FROM imagen WHERE idImagen = ?', [idImagen]);
 
-    // Eliminar archivo físico
+    // Eliminar de Cloudinary
     try {
-      const filePath = path.join(__dirname, '..', imagen.url);
-      await fs.unlink(filePath);
+      // Extraer public_id de la URL de Cloudinary
+      const urlParts = imagen.url.split('/');
+      const fileName = urlParts[urlParts.length - 1];
+      const publicId = `inmobiliaria-juliana/propiedades/${fileName.split('.')[0]}`;
+      
+      await cloudinary.uploader.destroy(publicId);
     } catch (err) {
-      console.error('Error al eliminar archivo físico:', err);
+      console.error('Error al eliminar de Cloudinary:', err);
     }
 
     res.json({
