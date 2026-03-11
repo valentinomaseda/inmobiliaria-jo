@@ -4,7 +4,7 @@ export default function ValuationBanner() {
   return (
     <section className="bg-jo-dark py-20 relative overflow-hidden">
       {/* Decoración de fondo */}
-      <div className="absolute inset-0 opacity-5">
+      <div className="absolute inset-0 opacity-5 overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-jo-pink rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-orange-500 rounded-full blur-3xl"></div>
       </div>

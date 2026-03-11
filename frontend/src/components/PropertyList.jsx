@@ -6,7 +6,7 @@ export default function PropertyList({ propiedades, destacadas = false }) {
   const propiedadesAMostrar = destacadas ? propiedades.slice(0, 3) : propiedades;
 
   return (
-    <main id="propiedades" className="flex-grow max-w-7xl mx-auto px-6 py-20 w-full">
+    <main id="propiedades" className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-20 w-full">
       <div 
         className="flex flex-col md:flex-row md:justify-between md:items-end mb-12 gap-4"
         data-aos="fade-up"

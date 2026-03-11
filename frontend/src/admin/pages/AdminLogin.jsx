@@ -27,27 +27,27 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="dark min-h-screen bg-jo-darkBg flex items-center justify-center px-6">
+    <div className="dark min-h-screen bg-jo-darkBg flex items-center justify-center px-4 sm:px-6">
       <div className="max-w-md w-full">
         {/* Logo y título */}
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-6">
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="flex justify-center mb-4 sm:mb-6">
             <img 
               src="/src/public/logo-png.png" 
               alt="Juliana Ortiz Inmobiliaria" 
-              className="h-20 w-auto"
+              className="h-16 sm:h-20 w-auto"
             />
           </div>
-          <h1 className="text-3xl font-display font-bold text-jo-darkText mb-2">
+          <h1 className="text-2xl sm:text-3xl font-display font-bold text-jo-darkText mb-2">
             Panel de Administración
           </h1>
-          <p className="text-jo-darkTextMuted">
+          <p className="text-sm sm:text-base text-jo-darkTextMuted">
             Ingresa con tus credenciales
           </p>
         </div>
 
         {/* Formulario */}
-        <div className="bg-jo-darkSurface rounded-2xl shadow-premium-dark p-8">
+        <div className="bg-jo-darkSurface rounded-2xl shadow-premium-dark p-6 sm:p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
@@ -64,7 +64,7 @@ export default function AdminLogin() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg focus:ring-2 focus:ring-jo-pink focus:border-transparent transition-all outline-none placeholder:text-jo-darkTextMuted"
+                className="w-full px-4 py-3 bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg focus:ring-2 focus:ring-jo-pink focus:border-transparent transition-all outline-none placeholder:text-jo-darkTextMuted dark:bg-jo-darkCard dark:text-jo-darkText dark:placeholder:text-jo-darkTextMuted"
                 placeholder="admin@inmobiliaria.com"
                 required
               />
@@ -80,7 +80,7 @@ export default function AdminLogin() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 pr-12 bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg focus:ring-2 focus:ring-jo-pink focus:border-transparent transition-all outline-none placeholder:text-jo-darkTextMuted"
+                  className="w-full px-4 py-3 pr-12 bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg focus:ring-2 focus:ring-jo-pink focus:border-transparent transition-all outline-none placeholder:text-jo-darkTextMuted dark:bg-jo-darkCard dark:text-jo-darkText dark:placeholder:text-jo-darkTextMuted"
                   placeholder="••••••••"
                   required
                 />

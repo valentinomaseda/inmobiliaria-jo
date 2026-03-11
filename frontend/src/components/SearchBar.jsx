@@ -13,9 +13,9 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="relative -mt-6 z-20 max-w-7xl mx-auto px-6">
+    <div className="relative -mt-6 z-20 max-w-7xl mx-auto px-4 sm:px-6">
       <div 
-        className="bg-white shadow-premium rounded-full p-2 flex flex-col md:flex-row items-stretch md:items-center gap-2"
+        className="bg-white shadow-premium rounded-2xl p-3 flex flex-col md:flex-row items-stretch md:items-center gap-2"
         data-aos="zoom-in"
         data-aos-delay="400"
       >
@@ -24,7 +24,7 @@ export default function SearchBar() {
           <select
             value={operacion}
             onChange={(e) => setOperacion(e.target.value)}
-            className="w-full px-6 py-4 bg-transparent text-jo-dark font-medium rounded-full focus:outline-none focus:bg-gray-50 transition-colors cursor-pointer appearance-none"
+            className="w-full px-4 py-3 bg-transparent text-jo-dark font-medium rounded-lg focus:outline-none focus:bg-gray-50 transition-colors cursor-pointer appearance-none"
             style={{ 
               backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23666'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
               backgroundRepeat: 'no-repeat',
@@ -46,7 +46,7 @@ export default function SearchBar() {
           <select
             value={ubicacion}
             onChange={(e) => setUbicacion(e.target.value)}
-            className="w-full px-6 py-4 bg-transparent text-jo-dark font-medium rounded-full focus:outline-none focus:bg-gray-50 transition-colors cursor-pointer appearance-none"
+            className="w-full px-4 py-3 bg-transparent text-jo-dark font-medium rounded-lg focus:outline-none focus:bg-gray-50 transition-colors cursor-pointer appearance-none"
             style={{ 
               backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23666'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
               backgroundRepeat: 'no-repeat',
@@ -66,11 +66,11 @@ export default function SearchBar() {
         <div className="hidden md:block w-px h-8 bg-gray-200"></div>
 
         {/* Select Tipo */}
-        <div className="flex-1 min-w-[240px]">
+        <div className="flex-1 min-w-[180px]">
           <select
             value={tipo}
             onChange={(e) => setTipo(e.target.value)}
-            className="w-full px-6 py-4 bg-transparent text-jo-dark font-medium rounded-full focus:outline-none focus:bg-gray-50 transition-colors cursor-pointer appearance-none"
+            className="w-full px-4 py-3 bg-transparent text-jo-dark font-medium rounded-lg focus:outline-none focus:bg-gray-50 transition-colors cursor-pointer appearance-none"
             style={{ 
               backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23666'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
               backgroundRepeat: 'no-repeat',
@@ -91,7 +91,7 @@ export default function SearchBar() {
         {/* Botón de búsqueda */}
         <button
           onClick={handleSearch}
-          className="px-8 py-4 bg-jo-pink hover:bg-jo-pinkHover text-white font-semibold rounded-full transition-all flex items-center justify-center gap-2 shadow-lg shadow-pink-500/25 group"
+          className="px-6 py-3 bg-jo-pink hover:bg-jo-pinkHover text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-pink-500/25 group"
         >
           <svg 
             className="w-5 h-5 group-hover:scale-110 transition-transform" 

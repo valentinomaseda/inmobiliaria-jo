@@ -4,6 +4,7 @@ import SearchBar from "../components/SearchBar";
 import PropertyList from "../components/PropertyList";
 import AboutSection from "../components/AboutSection";
 import ValuationBanner from "../components/ValuationBanner";
+import OfficeLocation from "../components/OfficeLocation";
 import { propiedadService } from "../services/propiedadService";
 import { imagenService } from "../services/imagenService";
 
@@ -28,9 +29,9 @@ export default function Home() {
           precio: `$${Number(prop.valor).toLocaleString()}`,
           tipo: prop.operacion === 'venta' ? 'Venta' : prop.operacion === 'alquiler' ? 'Alquiler' : 'Alquiler temporal',
           imagen: imagenPrincipal ? imagenService.getImageUrl(imagenPrincipal.url) : '/placeholder.jpg',
-          ambientes: prop.ambientes || 0,
+          ambientes: prop.cantAmbientes || 0,
           banos: prop.banos || 0,
-          metros: `${prop.superficie_total || 0} m²`,
+          metros: `${prop.metCuad || 0} m²`,
           destacada: false
         };
       });
@@ -57,6 +58,7 @@ export default function Home() {
       <PropertyList propiedades={propiedades} destacadas={true} />
       <AboutSection />
       <ValuationBanner />
+      <OfficeLocation />
     </>
   );
 }

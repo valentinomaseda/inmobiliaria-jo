@@ -30,7 +30,7 @@ export default function AboutSection() {
 
   return (
     <section className="bg-jo-surface py-20">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Columna Izquierda - Imagen */}
           <div 

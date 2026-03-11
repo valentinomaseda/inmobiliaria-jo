@@ -9,7 +9,7 @@ export default function Footer() {
       className="bg-jo-dark text-white py-20 mt-auto border-t-4 border-jo-pink"
     >
       <div 
-        className="max-w-5xl mx-auto px-6 text-center space-y-10"
+        className="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-10"
         data-aos="fade-up"
         data-aos-duration="800"
       >

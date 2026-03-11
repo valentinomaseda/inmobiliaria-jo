@@ -27,9 +27,9 @@ export default function PropiedadDetalle() {
           precio: `$${Number(prop.valor).toLocaleString()}`,
           tipo: prop.operacion === 'venta' ? 'Venta' : prop.operacion === 'alquiler' ? 'Alquiler' : 'Alquiler temporal',
           operacion: prop.operacion,
-          ambientes: prop.ambientes || 0,
+          ambientes: prop.cantAmbientes || 0,
           banos: prop.banos || 0,
-          metros: `${prop.superficie_total || 0} m²`,
+          metros: `${prop.metCuad || 0} m²`,
           descripcion: prop.descripcion,
           imagenes: (prop.imagenes || []).map(img => imagenService.getImageUrl(img.url)),
           caracteristicas: (prop.caracteristicas || []).map(c => c.nombre)
@@ -107,7 +107,7 @@ export default function PropiedadDetalle() {
 
   return (
     <div className="min-h-screen bg-white pt-28 pb-20">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Botón Volver */}
         <button 
           onClick={() => navigate(-1)}

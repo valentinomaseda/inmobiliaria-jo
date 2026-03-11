@@ -77,42 +77,42 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h2 className="text-3xl font-display font-bold text-jo-darkText mb-2">
+      <div className="mb-6 sm:mb-8">
+        <h2 className="text-2xl sm:text-3xl font-display font-bold text-jo-darkText mb-2">
           Dashboard
         </h2>
-        <p className="text-jo-darkTextMuted">
+        <p className="text-sm sm:text-base text-jo-darkTextMuted">
           Resumen general de la inmobiliaria
         </p>
       </div>
 
       {/* Tarjetas de estadísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
         {statCards.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <div key={index} className="bg-jo-darkSurface rounded-xl shadow-premium-dark p-6 border border-jo-darkBorder">
+            <div key={index} className="bg-jo-darkSurface rounded-xl shadow-premium-dark p-4 sm:p-6 border border-jo-darkBorder">
               <div className="flex items-center justify-between mb-4">
-                <div className={`${stat.color} p-3 rounded-lg text-white`}>
-                  <Icon size={24} />
+                <div className={`${stat.color} p-2 sm:p-3 rounded-lg text-white`}>
+                  <Icon size={20} className="sm:w-6 sm:h-6" />
                 </div>
               </div>
-              <p className="text-3xl font-bold text-jo-darkText mb-1">{stat.value}</p>
-              <p className="text-sm text-jo-darkTextMuted">{stat.title}</p>
+              <p className="text-2xl sm:text-3xl font-bold text-jo-darkText mb-1">{stat.value}</p>
+              <p className="text-xs sm:text-sm text-jo-darkTextMuted">{stat.title}</p>
             </div>
           );
         })}
       </div>
 
       {/* Propiedades recientes */}
-      <div className="bg-jo-darkSurface rounded-xl shadow-premium-dark p-6 border border-jo-darkBorder">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-display font-bold text-jo-darkText">
+      <div className="bg-jo-darkSurface rounded-xl shadow-premium-dark p-4 sm:p-6 border border-jo-darkBorder">
+        <div className="flex justify-between items-center mb-4 sm:mb-6">
+          <h3 className="text-lg sm:text-xl font-display font-bold text-jo-darkText">
             Propiedades Recientes
           </h3>
           <Link 
             to="/admin/propiedades" 
-            className="text-jo-pink hover:text-jo-pinkHover transition-colors font-medium"
+            className="text-sm sm:text-base text-jo-pink hover:text-jo-pinkHover transition-colors font-medium"
           >
             Ver todas
           </Link>
@@ -130,57 +130,59 @@ export default function AdminDashboard() {
             </Link>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-jo-darkBorder">
-                  <th className="text-left py-3 px-4 text-jo-darkTextMuted font-medium text-sm">
-                    Nombre
-                  </th>
-                  <th className="text-left py-3 px-4 text-jo-darkTextMuted font-medium text-sm">
-                    Tipo
-                  </th>
-                  <th className="text-left py-3 px-4 text-jo-darkTextMuted font-medium text-sm">
-                    Operación
-                  </th>
-                  <th className="text-left py-3 px-4 text-jo-darkTextMuted font-medium text-sm">
-                    Precio
-                  </th>
-                  <th className="text-left py-3 px-4 text-jo-darkTextMuted font-medium text-sm">
-                    Estado
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {propiedadesRecientes.map((propiedad) => (
-                  <tr key={propiedad.idPropiedad} className="border-b border-jo-darkBorder hover:bg-jo-darkCard transition-colors">
-                    <td className="py-3 px-4 font-medium text-jo-darkText">
-                      {propiedad.nombre}
-                    </td>
-                    <td className="py-3 px-4 text-jo-darkTextMuted capitalize">
-                      {propiedad.tipo}
-                    </td>
-                    <td className="py-3 px-4 text-jo-darkTextMuted capitalize">
-                      {propiedad.operacion}
-                    </td>
-                    <td className="py-3 px-4 font-medium text-jo-darkText">
-                      ${Number(propiedad.valor).toLocaleString()}
-                    </td>
-                    <td className="py-3 px-4">
-                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                        propiedad.estado === 'disponible' 
-                          ? 'bg-green-900/30 text-green-400 border border-green-700/50'
-                          : propiedad.estado === 'reservada'
-                          ? 'bg-yellow-900/30 text-yellow-400 border border-yellow-700/50'
-                          : 'bg-gray-700/30 text-gray-400 border border-gray-600/50'
-                      }`}>
-                        {propiedad.estado}
-                      </span>
-                    </td>
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <div className="inline-block min-w-full align-middle">
+              <table className="min-w-full">
+                <thead>
+                  <tr className="border-b border-jo-darkBorder">
+                    <th className="text-left py-3 px-4 text-jo-darkTextMuted font-medium text-xs sm:text-sm whitespace-nowrap">
+                      Nombre
+                    </th>
+                    <th className="text-left py-3 px-4 text-jo-darkTextMuted font-medium text-xs sm:text-sm whitespace-nowrap">
+                      Tipo
+                    </th>
+                    <th className="text-left py-3 px-4 text-jo-darkTextMuted font-medium text-xs sm:text-sm whitespace-nowrap">
+                      Operación
+                    </th>
+                    <th className="text-left py-3 px-4 text-jo-darkTextMuted font-medium text-xs sm:text-sm whitespace-nowrap">
+                      Precio
+                    </th>
+                    <th className="text-left py-3 px-4 text-jo-darkTextMuted font-medium text-xs sm:text-sm whitespace-nowrap">
+                      Estado
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {propiedadesRecientes.map((propiedad) => (
+                    <tr key={propiedad.idPropiedad} className="border-b border-jo-darkBorder hover:bg-jo-darkCard transition-colors">
+                      <td className="py-3 px-4 font-medium text-jo-darkText text-sm">
+                        {propiedad.nombre}
+                      </td>
+                      <td className="py-3 px-4 text-jo-darkTextMuted capitalize text-xs sm:text-sm whitespace-nowrap">
+                        {propiedad.tipo}
+                      </td>
+                      <td className="py-3 px-4 text-jo-darkTextMuted capitalize text-xs sm:text-sm whitespace-nowrap">
+                        {propiedad.operacion}
+                      </td>
+                      <td className="py-3 px-4 font-medium text-jo-darkText text-sm whitespace-nowrap">
+                        ${Number(propiedad.valor).toLocaleString()}
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className={`inline-block px-2 sm:px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
+                          propiedad.estado === 'disponible' 
+                            ? 'bg-green-900/30 text-green-400 border border-green-700/50'
+                            : propiedad.estado === 'reservada'
+                            ? 'bg-yellow-900/30 text-yellow-400 border border-yellow-700/50'
+                            : 'bg-gray-700/30 text-gray-400 border border-gray-600/50'
+                        }`}>
+                          {propiedad.estado}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>

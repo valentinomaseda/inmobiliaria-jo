@@ -199,23 +199,23 @@ export default function AdminPropiedadForm() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h2 className="text-3xl font-display font-bold text-jo-darkText mb-2">
+      <div className="mb-6 sm:mb-8">
+        <h2 className="text-2xl sm:text-3xl font-display font-bold text-jo-darkText mb-2">
           {isEdit ? 'Editar Propiedad' : 'Nueva Propiedad'}
         </h2>
-        <p className="text-jo-darkTextMuted">
+        <p className="text-sm sm:text-base text-jo-darkTextMuted">
           {isEdit ? 'Actualiza los datos de la propiedad' : 'Completa los datos de la nueva propiedad'}
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
         {/* Información básica */}
-        <div className="bg-jo-darkSurface rounded-xl shadow-premium-dark p-6 border border-jo-darkBorder">
-          <h3 className="text-lg font-semibold text-jo-darkText mb-4">Información Básica</h3>
+        <div className="bg-jo-darkSurface rounded-xl shadow-premium-dark p-4 sm:p-6 border border-jo-darkBorder">
+          <h3 className="text-base sm:text-lg font-semibold text-jo-darkText mb-3 sm:mb-4">Información Básica</h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-jo-darkText mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-jo-darkText mb-2">
                 Nombre de la propiedad *
               </label>
               <input
@@ -223,21 +223,21 @@ export default function AdminPropiedadForm() {
                 name="nombre"
                 value={formData.nombre}
                 onChange={handleChange}
-                className="w-full px-4 py-2 bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg placeholder:text-jo-darkTextMuted focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
+                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg placeholder:text-jo-darkTextMuted focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
                 placeholder="Ej: Casa moderna en barrio cerrado"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-jo-darkText mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-jo-darkText mb-2">
                 Operación *
               </label>
               <select
                 name="operacion"
                 value={formData.operacion}
                 onChange={handleChange}
-                className="w-full px-4 py-2 bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg placeholder:text-jo-darkTextMuted focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
+                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg placeholder:text-jo-darkTextMuted focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
                 required
               >
                 <option value="venta">Venta</option>
@@ -247,14 +247,14 @@ export default function AdminPropiedadForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-jo-darkText mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-jo-darkText mb-2">
                 Tipo *
               </label>
               <select
                 name="tipo"
                 value={formData.tipo}
                 onChange={handleChange}
-                className="w-full px-4 py-2 bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg placeholder:text-jo-darkTextMuted focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
+                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg placeholder:text-jo-darkTextMuted focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
                 required
               >
                 <option value="casa">Casa</option>
@@ -268,7 +268,7 @@ export default function AdminPropiedadForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-jo-darkText mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-jo-darkText mb-2">
                 Precio ($) *
               </label>
               <input
@@ -276,7 +276,7 @@ export default function AdminPropiedadForm() {
                 name="valor"
                 value={formData.valor}
                 onChange={handleChange}
-                className="w-full px-4 py-2 bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg placeholder:text-jo-darkTextMuted focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
+                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg placeholder:text-jo-darkTextMuted focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
                 placeholder="0"
                 required
                 min="0"
@@ -285,14 +285,14 @@ export default function AdminPropiedadForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-jo-darkText mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-jo-darkText mb-2">
                 Estado *
               </label>
               <select
                 name="estado"
                 value={formData.estado}
                 onChange={handleChange}
-                className="w-full px-4 py-2 bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg placeholder:text-jo-darkTextMuted focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
+                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base bg-jo-darkCard border border-jo-darkBorder text-jo-darkText rounded-lg placeholder:text-jo-darkTextMuted focus:ring-2 focus:ring-jo-pink focus:border-transparent outline-none"
                 required
               >
                 <option value="disponible">Disponible</option>

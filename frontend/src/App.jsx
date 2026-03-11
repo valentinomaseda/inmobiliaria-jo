@@ -22,21 +22,21 @@ export default function App() {
       <Routes>
         {/* Rutas públicas */}
         <Route path="/" element={
-          <div className="min-h-screen flex flex-col bg-jo-surface selection:bg-jo-pink selection:text-white">
+          <div className="min-h-screen flex flex-col bg-jo-surface selection:bg-jo-pink selection:text-white overflow-x-hidden">
             <Header />
             <Home />
             <Footer />
           </div>
         } />
         <Route path="/catalogo" element={
-          <div className="min-h-screen flex flex-col bg-jo-surface selection:bg-jo-pink selection:text-white">
+          <div className="min-h-screen flex flex-col bg-jo-surface selection:bg-jo-pink selection:text-white overflow-x-hidden">
             <Header />
             <Catalogo />
             <Footer />
           </div>
         } />
         <Route path="/propiedad/:id" element={
-          <div className="min-h-screen flex flex-col bg-jo-surface selection:bg-jo-pink selection:text-white">
+          <div className="min-h-screen flex flex-col bg-jo-surface selection:bg-jo-pink selection:text-white overflow-x-hidden">
             <Header />
             <PropiedadDetalle />
             <Footer />

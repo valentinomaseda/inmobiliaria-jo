@@ -75,21 +75,22 @@ export default function AdminCaracteristicas() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
         <div>
-          <h2 className="text-3xl font-display font-bold text-jo-darkText mb-2">
+          <h2 className="text-2xl sm:text-3xl font-display font-bold text-jo-darkText mb-2">
             Características
           </h2>
-          <p className="text-jo-darkTextMuted">
+          <p className="text-sm sm:text-base text-jo-darkTextMuted">
             Gestiona las características que pueden tener las propiedades
           </p>
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 bg-jo-pink hover:bg-jo-pinkHover text-white px-6 py-3 rounded-lg transition-colors font-medium"
+          className="flex items-center justify-center gap-2 bg-jo-pink hover:bg-jo-pinkHover text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg transition-colors font-medium text-sm sm:text-base whitespace-nowrap"
         >
           <FiPlus size={20} />
-          Nueva Característica
+          <span className="hidden xs:inline">Nueva Característica</span>
+          <span className="xs:hidden">Nueva</span>
         </button>
       </div>
 
@@ -105,37 +106,37 @@ export default function AdminCaracteristicas() {
             <p>No hay características registradas</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 p-4 sm:p-6">
             {caracteristicas.map((caracteristica) => (
               <div
                 key={caracteristica.idCaracteristica}
-                className="bg-jo-darkCard border border-jo-darkBorder rounded-lg p-4 hover:shadow-md transition-shadow"
+                className="bg-jo-darkCard border border-jo-darkBorder rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow"
               >
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-jo-darkText mb-1">
+                <div className="flex justify-between items-start gap-2 mb-2">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-jo-darkText mb-1 text-sm sm:text-base truncate">
                       {caracteristica.nombre}
                     </h3>
                     {caracteristica.descripcion && (
-                      <p className="text-sm text-jo-darkTextMuted">
+                      <p className="text-xs sm:text-sm text-jo-darkTextMuted line-clamp-2">
                         {caracteristica.descripcion}
                       </p>
                     )}
                   </div>
-                  <div className="flex gap-2 ml-2">
+                  <div className="flex gap-1 sm:gap-2 flex-shrink-0">
                     <button
                       onClick={() => handleEdit(caracteristica)}
-                      className="p-2 text-blue-400 hover:bg-blue-900/20 rounded-lg transition-colors"
+                      className="p-1.5 sm:p-2 text-blue-400 hover:bg-blue-900/20 rounded-lg transition-colors"
                       title="Editar"
                     >
-                      <FiEdit2 size={16} />
+                      <FiEdit2 size={14} className="sm:w-4 sm:h-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(caracteristica.idCaracteristica)}
-                      className="p-2 text-red-400 hover:bg-red-900/20 rounded-lg transition-colors"
+                      className="p-1.5 sm:p-2 text-red-400 hover:bg-red-900/20 rounded-lg transition-colors"
                       title="Eliminar"
                     >
-                      <FiTrash2 size={16} />
+                      <FiTrash2 size={14} className="sm:w-4 sm:h-4" />
                     </button>
                   </div>
                 </div>

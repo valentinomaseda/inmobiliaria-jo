@@ -3,7 +3,7 @@ import React from 'react';
 export default function Hero() {
   return (
     <section 
-      className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 overflow-hidden"
       style={{
         backgroundImage: 'url(https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80)',
         backgroundSize: 'cover',
@@ -16,9 +16,9 @@ export default function Hero() {
       <div className="absolute inset-0 bg-white/40"></div>
 
       {/* Contenido */}
-      <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8 py-32 pb-40">
+      <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8 py-20 sm:py-28 md:py-32 pb-32 md:pb-40">
         <h1 
-          className="text-5xl md:text-7xl font-bold tracking-tighter leading-[1.1]"
+          className="text-3xl xs:text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter leading-tight md:leading-[1.1] break-words"
           data-aos="fade-down"
           data-aos-delay="100"
         >
@@ -29,7 +29,7 @@ export default function Hero() {
           </span>
         </h1>
         <p 
-          className="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto font-medium leading-relaxed drop-shadow-sm"
+          className="text-base xs:text-lg md:text-xl text-gray-700 max-w-xl sm:max-w-2xl mx-auto font-medium leading-relaxed drop-shadow-sm px-2 sm:px-0"
           data-aos="fade-up"
           data-aos-delay="200"
         >

@@ -27,9 +27,9 @@ export default function Catalogo() {
           precio: `$${Number(prop.valor).toLocaleString()}`,
           tipo: prop.operacion === 'venta' ? 'Venta' : prop.operacion === 'alquiler' ? 'Alquiler' : 'Alquiler temporal',
           imagen: imagenPrincipal ? imagenService.getImageUrl(imagenPrincipal.url) : '/placeholder.jpg',
-          ambientes: prop.ambientes || 0,
+          ambientes: prop.cantAmbientes || 0,
           banos: prop.banos || 0,
-          metros: `${prop.superficie_total || 0} m²`,
+          metros: `${prop.metCuad || 0} m²`,
           destacada: false
         };
       });
@@ -61,7 +61,7 @@ export default function Catalogo() {
 
   return (
     <div className="min-h-screen bg-white pt-28 pb-20">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Header de Catálogo */}
         <div className="mb-12" data-aos="fade-down">
           <Link 
