@@ -156,8 +156,8 @@ CREATE TABLE `propiedad_caracteristica` (
   `idCaracteristica` int unsigned NOT NULL,
   PRIMARY KEY (`idPropiedad`,`idCaracteristica`),
   KEY `fk_propiedad_caracteristica_caracteristica_idx` (`idCaracteristica`),
-  CONSTRAINT `fk_propiedad_caracteristica_caracteristica` FOREIGN KEY (`idCaracteristica`) REFERENCES `caracteristica` (`idCaracteristica`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT `fk_propiedad_caracteristica_propiedad` FOREIGN KEY (`idPropiedad`) REFERENCES `propiedad` (`idPropiedad`) ON DELETE RESTRICT ON UPDATE CASCADE
+  CONSTRAINT `fk_propiedad_caracteristica_caracteristica` FOREIGN KEY (`idCaracteristica`) REFERENCES `caracteristica` (`idCaracteristica`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_propiedad_caracteristica_propiedad` FOREIGN KEY (`idPropiedad`) REFERENCES `propiedad` (`idPropiedad`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

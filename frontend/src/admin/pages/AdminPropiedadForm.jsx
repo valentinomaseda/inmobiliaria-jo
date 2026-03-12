@@ -101,12 +101,8 @@ export default function AdminPropiedadForm() {
       const response = await propiedadService.getById(id);
       const propiedad = response.data;
       
-      console.log('🔍 Valor original de BD:', propiedad.valor, typeof propiedad.valor);
-      
       // Limpiar el valor de la BD para asegurar que solo tenga números
       const valorLimpio = propiedad.valor ? limpiarPrecioDB(propiedad.valor) : '';
-      
-      console.log('✅ Valor limpio:', valorLimpio);
       
       setFormData({
         ...propiedad,
@@ -117,9 +113,7 @@ export default function AdminPropiedadForm() {
       
       // Formatear el precio limpio para mostrar
       if (valorLimpio) {
-        const precioFormat = formatearPrecio(valorLimpio);
-        console.log('💅 Precio formateado para mostrar:', precioFormat);
-        setPrecioFormateado(precioFormat);
+        setPrecioFormateado(formatearPrecio(valorLimpio));
       }
       
       setImagenes(propiedad.imagenes || []);
@@ -142,15 +136,10 @@ export default function AdminPropiedadForm() {
 
   const handlePrecioChange = (e) => {
     const valorIngresado = e.target.value;
-    console.log('⌨️ Usuario ingresó:', valorIngresado);
-    
     const precioLimpio = limpiarPrecioInput(valorIngresado);
-    console.log('🧹 Precio limpio:', precioLimpio);
     
     // Actualizar el valor formateado para mostrar
-    const precioFormat = formatearPrecio(precioLimpio);
-    console.log('💅 Precio formateado:', precioFormat);
-    setPrecioFormateado(precioFormat);
+    setPrecioFormateado(formatearPrecio(precioLimpio));
     
     // Actualizar el valor numérico en el estado
     setFormData({
@@ -232,9 +221,6 @@ export default function AdminPropiedadForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
-    console.log('📤 Enviando formData:', formData);
-    console.log('💰 Valor a guardar:', formData.valor, typeof formData.valor);
 
     try {
       let propiedadId;
