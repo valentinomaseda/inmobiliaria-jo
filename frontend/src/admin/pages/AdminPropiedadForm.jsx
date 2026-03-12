@@ -55,6 +55,37 @@ export default function AdminPropiedadForm() {
     }
   }, [id]);
 
+  // Función para formatear precio con separadores de miles
+  const formatearPrecio = (valor) => {
+    // Remover todo lo que no sea número
+    const numero = valor.toString().replace(/[^0-9]/g, '');
+    if (!numero) return '';
+    
+    // Formatear con puntos como separador de miles
+    return numero.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  };
+
+  // Función para limpiar el formato y obtener solo números (cuando viene del input de usuario)
+  const limpiarPrecioInput = (valor) => {
+    // Simplemente eliminar todo lo que no sean dígitos
+    return valor.toString().replace(/[^0-9]/g, '');
+  };
+
+  // Función para limpiar el valor de la BD (puede venir como número con decimales)
+  const limpiarPrecioDB = (valor) => {
+    if (!valor) return '';
+    
+    // Si viene como número (de la BD), redondear y convertir a string
+    if (typeof valor === 'number') {
+      return Math.round(valor).toString();
+    }
+    
+    // Si viene como string, parsear como número para manejar decimales correctamente
+    const numero = parseFloat(valor);
+    if (isNaN(numero)) return '';
+    return Math.round(numero).toString();
+  };
+
   const loadCaracteristicas = async () => {
     try {
       const response = await caracteristicaService.getAll();
@@ -69,15 +100,28 @@ export default function AdminPropiedadForm() {
     try {
       const response = await propiedadService.getById(id);
       const propiedad = response.data;
+      
+      console.log('🔍 Valor original de BD:', propiedad.valor, typeof propiedad.valor);
+      
+      // Limpiar el valor de la BD para asegurar que solo tenga números
+      const valorLimpio = propiedad.valor ? limpiarPrecioDB(propiedad.valor) : '';
+      
+      console.log('✅ Valor limpio:', valorLimpio);
+      
       setFormData({
         ...propiedad,
+        valor: valorLimpio,  // Guardar solo números
         moneda: propiedad.moneda || 'USD',
         destacada: !!propiedad.destacada
       });
-      // Formatear el precio para mostrar
-      if (propiedad.valor) {
-        setPrecioFormateado(formatearPrecio(propiedad.valor.toString()));
+      
+      // Formatear el precio limpio para mostrar
+      if (valorLimpio) {
+        const precioFormat = formatearPrecio(valorLimpio);
+        console.log('💅 Precio formateado para mostrar:', precioFormat);
+        setPrecioFormateado(precioFormat);
       }
+      
       setImagenes(propiedad.imagenes || []);
       setCaracteristicasSeleccionadas(
         (propiedad.caracteristicas || []).map(c => c.idCaracteristica)
@@ -86,21 +130,6 @@ export default function AdminPropiedadForm() {
       showError('Error al cargar la propiedad');
       navigate('/admin/propiedades');
     }
-  };
-
-  // Función para formatear precio con separadores de miles
-  const formatearPrecio = (valor) => {
-    // Remover todo lo que no sea número
-    const numero = valor.toString().replace(/[^0-9]/g, '');
-    if (!numero) return '';
-    
-    // Formatear con puntos como separador de miles
-    return numero.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  };
-
-  // Función para limpiar el formato y obtener solo el número
-  const limpiarPrecio = (valor) => {
-    return valor.toString().replace(/[^0-9]/g, '');
   };
 
   const handleChange = (e) => {
@@ -113,10 +142,15 @@ export default function AdminPropiedadForm() {
 
   const handlePrecioChange = (e) => {
     const valorIngresado = e.target.value;
-    const precioLimpio = limpiarPrecio(valorIngresado);
+    console.log('⌨️ Usuario ingresó:', valorIngresado);
+    
+    const precioLimpio = limpiarPrecioInput(valorIngresado);
+    console.log('🧹 Precio limpio:', precioLimpio);
     
     // Actualizar el valor formateado para mostrar
-    setPrecioFormateado(formatearPrecio(precioLimpio));
+    const precioFormat = formatearPrecio(precioLimpio);
+    console.log('💅 Precio formateado:', precioFormat);
+    setPrecioFormateado(precioFormat);
     
     // Actualizar el valor numérico en el estado
     setFormData({
@@ -198,6 +232,9 @@ export default function AdminPropiedadForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    console.log('📤 Enviando formData:', formData);
+    console.log('💰 Valor a guardar:', formData.valor, typeof formData.valor);
 
     try {
       let propiedadId;

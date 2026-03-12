@@ -48,7 +48,7 @@ export default function Catalogo() {
           ambientes: prop.cantAmbientes || 0,
           banos: prop.banos || 0,
           metros: `${prop.metCuad || 0} m²`,
-          destacada: false,
+          destacada: !!prop.destacada,
           // Datos adicionales para filtros locales
           ciudad: prop.ciudad,
           tipoPropiedad: prop.tipo

@@ -13,11 +13,11 @@ export default function PropertyList({ propiedades, destacadas = false }) {
       >
         <div>
           <h2 className="text-3xl font-display font-bold text-jo-dark">
-            {destacadas ? 'Últimos Ingresos' : 'Catálogo Completo'}
+            {destacadas ? 'Propiedades Destacadas' : 'Catálogo Completo'}
           </h2>
           <p className="text-jo-textMuted mt-2">
             {destacadas 
-              ? 'Propiedades destacadas en nuestra cartera.' 
+              ? 'Nuestras mejores propiedades seleccionadas para ti.' 
               : `${propiedades.length} propiedades disponibles`}
           </p>
         </div>

@@ -18,7 +18,8 @@ export default function Home() {
 
   const loadPropiedades = async () => {
     try {
-      const response = await propiedadService.getAll({ estado: 'disponible' });
+      // Obtener solo propiedades destacadas para la página principal
+      const response = await propiedadService.getAll({ estado: 'disponible', destacada: 'true' });
       // Transformar datos del API al formato esperado por los componentes
       const propiedadesTransformadas = (response.data || []).map(prop => {
         const imagenPrincipal = prop.imagenes?.find(img => img.es_principal) || prop.imagenes?.[0];
@@ -37,7 +38,7 @@ export default function Home() {
           ambientes: prop.cantAmbientes || 0,
           banos: prop.banos || 0,
           metros: `${prop.metCuad || 0} m²`,
-          destacada: false
+          destacada: !!prop.destacada
         };
       });
       setPropiedades(propiedadesTransformadas);
