@@ -15,11 +15,14 @@ export default function AdminPropiedades() {
     tipo: '',
     estado: ''
   });
+  const [paginaActual, setPaginaActual] = useState(1);
+  const PROPIEDADES_POR_PAGINA = 10;
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, propiedadId: null, propiedadNombre: '' });
   const { success, error: showError } = useAlert();
 
   useEffect(() => {
     loadPropiedades();
+    setPaginaActual(1); // Resetear a página 1 cuando cambien los filtros
   }, [filtros]);
 
   const loadPropiedades = async () => {
@@ -33,6 +36,12 @@ export default function AdminPropiedades() {
       setLoading(false);
     }
   };
+
+  // Calcular paginación
+  const totalPaginas = Math.ceil(propiedades.length / PROPIEDADES_POR_PAGINA);
+  const indiceInicio = (paginaActual - 1) * PROPIEDADES_POR_PAGINA;
+  const indiceFin = indiceInicio + PROPIEDADES_POR_PAGINA;
+  const propiedadesPaginadas = propiedades.slice(indiceInicio, indiceFin);
 
   const openDeleteModal = (id, nombre) => {
     setDeleteModal({ isOpen: true, propiedadId: id, propiedadNombre: nombre });
@@ -160,35 +169,46 @@ export default function AdminPropiedades() {
             <p>No se encontraron propiedades</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full">
-              <thead className="bg-jo-darkCard">
-                <tr>
-                  <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-jo-darkText font-semibold text-xs sm:text-sm whitespace-nowrap">
-                    Imagen
-                  </th>
-                  <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-jo-darkText font-semibold text-xs sm:text-sm whitespace-nowrap">
-                    Nombre
-                  </th>
-                  <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-jo-darkText font-semibold text-xs sm:text-sm whitespace-nowrap">
-                    Tipo
-                  </th>
-                  <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-jo-darkText font-semibold text-xs sm:text-sm whitespace-nowrap">
-                    Operación
-                  </th>
-                  <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-jo-darkText font-semibold text-xs sm:text-sm whitespace-nowrap">
-                    Precio
-                  </th>
-                  <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-jo-darkText font-semibold text-xs sm:text-sm whitespace-nowrap">
-                    Estado
-                  </th>
-                  <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-jo-darkText font-semibold text-xs sm:text-sm whitespace-nowrap">
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {propiedades.map((propiedad) => {
+          <>
+            {/* Contador de resultados */}
+            <div className="px-6 py-4 bg-jo-darkCard border-b border-jo-darkBorder text-sm text-jo-darkTextMuted">
+              {propiedades.length} {propiedades.length === 1 ? 'propiedad' : 'propiedades'}
+              {totalPaginas > 1 && (
+                <span className="ml-2">
+                  • Mostrando {indiceInicio + 1}-{Math.min(indiceFin, propiedades.length)} de {propiedades.length}
+                </span>
+              )}
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="min-w-full">
+                <thead className="bg-jo-darkCard">
+                  <tr>
+                    <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-jo-darkText font-semibold text-xs sm:text-sm whitespace-nowrap">
+                      Imagen
+                    </th>
+                    <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-jo-darkText font-semibold text-xs sm:text-sm whitespace-nowrap">
+                      Nombre
+                    </th>
+                    <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-jo-darkText font-semibold text-xs sm:text-sm whitespace-nowrap">
+                      Tipo
+                    </th>
+                    <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-jo-darkText font-semibold text-xs sm:text-sm whitespace-nowrap">
+                      Operación
+                    </th>
+                    <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-jo-darkText font-semibold text-xs sm:text-sm whitespace-nowrap">
+                      Precio
+                    </th>
+                    <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-jo-darkText font-semibold text-xs sm:text-sm whitespace-nowrap">
+                      Estado
+                    </th>
+                    <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-jo-darkText font-semibold text-xs sm:text-sm whitespace-nowrap">
+                      Acciones
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {propiedadesPaginadas.map((propiedad) => {
                   const imagenPrincipal = propiedad.imagenes?.find(img => img.es_principal) || propiedad.imagenes?.[0];
                   
                   return (
@@ -253,6 +273,76 @@ export default function AdminPropiedades() {
               </tbody>
             </table>
           </div>
+
+          {/* Paginación */}
+          {totalPaginas > 1 && (
+            <div className="flex justify-center items-center gap-2 py-6 bg-jo-darkCard border-t border-jo-darkBorder">
+              {/* Botón anterior */}
+              <button
+                onClick={() => setPaginaActual(prev => Math.max(1, prev - 1))}
+                disabled={paginaActual === 1}
+                className={`px-3 py-2 rounded-lg font-medium transition-all ${
+                  paginaActual === 1
+                    ? 'bg-jo-darkSurface text-jo-darkTextMuted cursor-not-allowed opacity-50'
+                    : 'bg-jo-darkSurface text-jo-darkText hover:bg-jo-pink hover:text-white border border-jo-darkBorder'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+
+              {/* Números de página */}
+              <div className="flex gap-2">
+                {[...Array(totalPaginas)].map((_, index) => {
+                  const numeroPagina = index + 1;
+                  
+                  // Mostrar solo páginas cercanas
+                  if (
+                    numeroPagina === 1 ||
+                    numeroPagina === totalPaginas ||
+                    (numeroPagina >= paginaActual - 2 && numeroPagina <= paginaActual + 2)
+                  ) {
+                    return (
+                      <button
+                        key={numeroPagina}
+                        onClick={() => setPaginaActual(numeroPagina)}
+                        className={`w-10 h-10 rounded-lg font-medium transition-all ${
+                          paginaActual === numeroPagina
+                            ? 'bg-jo-pink text-white shadow-lg'
+                            : 'bg-jo-darkSurface text-jo-darkText hover:bg-jo-darkCard border border-jo-darkBorder'
+                        }`}
+                      >
+                        {numeroPagina}
+                      </button>
+                    );
+                  } else if (
+                    numeroPagina === paginaActual - 3 ||
+                    numeroPagina === paginaActual + 3
+                  ) {
+                    return <span key={numeroPagina} className="px-2 text-jo-darkTextMuted">...</span>;
+                  }
+                  return null;
+                })}
+              </div>
+
+              {/* Botón siguiente */}
+              <button
+                onClick={() => setPaginaActual(prev => Math.min(totalPaginas, prev + 1))}
+                disabled={paginaActual === totalPaginas}
+                className={`px-3 py-2 rounded-lg font-medium transition-all ${
+                  paginaActual === totalPaginas
+                    ? 'bg-jo-darkSurface text-jo-darkTextMuted cursor-not-allowed opacity-50'
+                    : 'bg-jo-darkSurface text-jo-darkText hover:bg-jo-pink hover:text-white border border-jo-darkBorder'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          )}
+        </>
         )}
       </div>
 

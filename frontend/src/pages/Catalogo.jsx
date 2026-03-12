@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import PropertyCard from '../components/PropertyCard';
 import { propiedadService } from '../services/propiedadService';
 import { imagenService } from '../services/imagenService';
 
 export default function Catalogo() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [propiedades, setPropiedades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filtroTipo, setFiltroTipo] = useState('Todos');
   const [busqueda, setBusqueda] = useState('');
+  const [paginaActual, setPaginaActual] = useState(1);
+  const PROPIEDADES_POR_PAGINA = 10;
 
   // Obtener filtros de la URL
   const filtrosURL = {
@@ -18,8 +21,16 @@ export default function Catalogo() {
     tipo: searchParams.get('tipo') || ''
   };
 
+  // Función para eliminar un filtro específico
+  const eliminarFiltro = (filtroKey) => {
+    const params = new URLSearchParams(searchParams);
+    params.delete(filtroKey);
+    navigate(`/catalogo${params.toString() ? '?' + params.toString() : ''}`);
+  };
+
   useEffect(() => {
     loadPropiedades();
+    setPaginaActual(1); // Resetear a página 1 cuando cambien los filtros de URL
   }, [searchParams]);
 
   const loadPropiedades = async () => {
@@ -77,6 +88,17 @@ export default function Catalogo() {
     return cumpleTipo && cumpleBusqueda && cumpleUbicacion;
   });
 
+  // Calcular paginación
+  const totalPaginas = Math.ceil(propiedadesFiltradas.length / PROPIEDADES_POR_PAGINA);
+  const indiceInicio = (paginaActual - 1) * PROPIEDADES_POR_PAGINA;
+  const indiceFin = indiceInicio + PROPIEDADES_POR_PAGINA;
+  const propiedadesPaginadas = propiedadesFiltradas.slice(indiceInicio, indiceFin);
+
+  // Resetear a página 1 cuando cambien los filtros locales
+  useEffect(() => {
+    setPaginaActual(1);
+  }, [filtroTipo, busqueda]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white pt-28 pb-20 flex items-center justify-center">
@@ -114,7 +136,7 @@ export default function Catalogo() {
               {filtrosURL.operacion && (
                 <span className="inline-flex items-center gap-1 px-3 py-1 bg-jo-pink/10 text-jo-pink rounded-full text-sm font-medium">
                   {filtrosURL.operacion === 'venta' ? 'Venta' : 'Alquiler'}
-                  <button onClick={() => window.location.href = '/catalogo'} className="hover:text-jo-pinkHover">
+                  <button onClick={() => eliminarFiltro('operacion')} className="hover:text-jo-pinkHover">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -124,7 +146,7 @@ export default function Catalogo() {
               {filtrosURL.ubicacion && (
                 <span className="inline-flex items-center gap-1 px-3 py-1 bg-jo-pink/10 text-jo-pink rounded-full text-sm font-medium capitalize">
                   {filtrosURL.ubicacion}
-                  <button onClick={() => window.location.href = '/catalogo'} className="hover:text-jo-pinkHover">
+                  <button onClick={() => eliminarFiltro('ubicacion')} className="hover:text-jo-pinkHover">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -134,7 +156,7 @@ export default function Catalogo() {
               {filtrosURL.tipo && (
                 <span className="inline-flex items-center gap-1 px-3 py-1 bg-jo-pink/10 text-jo-pink rounded-full text-sm font-medium capitalize">
                   {filtrosURL.tipo}
-                  <button onClick={() => window.location.href = '/catalogo'} className="hover:text-jo-pinkHover">
+                  <button onClick={() => eliminarFiltro('tipo')} className="hover:text-jo-pinkHover">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -192,16 +214,101 @@ export default function Catalogo() {
           {/* Contador de resultados */}
           <div className="text-sm text-jo-textMuted">
             {propiedadesFiltradas.length} {propiedadesFiltradas.length === 1 ? 'propiedad encontrada' : 'propiedades encontradas'}
+            {totalPaginas > 1 && (
+              <span className="ml-2">
+                • Mostrando {indiceInicio + 1}-{Math.min(indiceFin, propiedadesFiltradas.length)} de {propiedadesFiltradas.length}
+              </span>
+            )}
           </div>
         </div>
 
         {/* Grid de Propiedades */}
-        {propiedadesFiltradas.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {propiedadesFiltradas.map((propiedad) => (
-              <PropertyCard key={propiedad.id} propiedad={propiedad} />
-            ))}
-          </div>
+        {propiedadesPaginadas.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {propiedadesPaginadas.map((propiedad) => (
+                <PropertyCard key={propiedad.id} propiedad={propiedad} />
+              ))}
+            </div>
+
+            {/* Paginación */}
+            {totalPaginas > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-12">
+                {/* Botón anterior */}
+                <button
+                  onClick={() => {
+                    setPaginaActual(prev => Math.max(1, prev - 1));
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  disabled={paginaActual === 1}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    paginaActual === 1
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      : 'bg-white text-jo-dark hover:bg-jo-pink hover:text-white border border-gray-200'
+                  }`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+
+                {/* Números de página */}
+                <div className="flex gap-2">
+                  {[...Array(totalPaginas)].map((_, index) => {
+                    const numeroPagina = index + 1;
+                    
+                    // Mostrar solo páginas cercanas (max 7 botones)
+                    if (
+                      numeroPagina === 1 ||
+                      numeroPagina === totalPaginas ||
+                      (numeroPagina >= paginaActual - 2 && numeroPagina <= paginaActual + 2)
+                    ) {
+                      return (
+                        <button
+                          key={numeroPagina}
+                          onClick={() => {
+                            setPaginaActual(numeroPagina);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          className={`w-10 h-10 rounded-lg font-medium transition-all ${
+                            paginaActual === numeroPagina
+                              ? 'bg-jo-pink text-white shadow-lg'
+                              : 'bg-white text-jo-dark hover:bg-gray-100 border border-gray-200'
+                          }`}
+                        >
+                          {numeroPagina}
+                        </button>
+                      );
+                    } else if (
+                      numeroPagina === paginaActual - 3 ||
+                      numeroPagina === paginaActual + 3
+                    ) {
+                      return <span key={numeroPagina} className="px-2 text-gray-400">...</span>;
+                    }
+                    return null;
+                  })}
+                </div>
+
+                {/* Botón siguiente */}
+                <button
+                  onClick={() => {
+                    setPaginaActual(prev => Math.min(totalPaginas, prev + 1));
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  disabled={paginaActual === totalPaginas}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    paginaActual === totalPaginas
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      : 'bg-white text-jo-dark hover:bg-jo-pink hover:text-white border border-gray-200'
+                  }`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-20">
             <svg className="w-20 h-20 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

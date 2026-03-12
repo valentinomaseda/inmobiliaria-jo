@@ -5,6 +5,21 @@ export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const handleInicioClick = (e) => {
+    e.preventDefault();
+    if (location.pathname !== '/') {
+      // Si no estamos en home, navegar primero
+      navigate('/');
+      // Esperar un momento para que cargue y luego hacer scroll al tope
+      setTimeout(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      }, 100);
+    } else {
+      // Si estamos en home, solo hacer scroll al tope
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }
+  };
+
   const handlePropiedadesClick = (e) => {
     e.preventDefault();
     if (location.pathname !== '/') {
@@ -35,7 +50,7 @@ export default function Header() {
   return (
     <header className="fixed w-full top-0 z-50 bg-white/80 backdrop-blur-md border-b border-jo-border/50 transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex justify-between items-center">
-        <Link to="/" className="flex items-center">
+        <Link to="/" onClick={handleInicioClick} className="flex items-center">
           <img 
             src="/src/public/logo-png.png" 
             alt="Juliana Ortiz Inmobiliaria" 
@@ -43,7 +58,7 @@ export default function Header() {
           />
         </Link>
         <nav className="hidden md:flex gap-8 text-sm font-medium text-jo-textMuted">
-          <Link to="/" className="hover:text-jo-dark transition-colors">Inicio</Link>
+          <Link to="/" onClick={handleInicioClick} className="hover:text-jo-dark transition-colors">Inicio</Link>
           <a href="#propiedades" onClick={handlePropiedadesClick} className="hover:text-jo-dark transition-colors">Propiedades</a>
           <a href="#contacto" onClick={handleContactoClick} className="hover:text-jo-dark transition-colors">Tasaciones</a>
         </nav>
